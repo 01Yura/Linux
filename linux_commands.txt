@@ -401,6 +401,11 @@ systemctl status процесс - показать статус процесса
     systemctl stop/start процесс- запустить/остановить процесс
 systemctl enable/disable программа - вкл или выкл из автозагрузки
 systemctl reload программа - перезагрущить программу 
+systemctl list-units --type=service - показать сервисы
+systemctl list-timers --all - показать все таймеры
+systemctl enable name.timer
+systemctl disable name.timer
+
 
 apropos слово - ищет описание по ключевому слову 
     apropos -s 1 passwd - найти утилиту смены пароля
@@ -809,7 +814,7 @@ newgrp Название_группы - позволяет пользовател
     
     for year in {2015..2020}; do echo $year; for month in {01..12}; do echo $month; done; done
 
-    КРОН 
+                                КРОН (CRON)
      /etc/crontab - общий КРОН
 
      # Example of job definition:
@@ -840,8 +845,87 @@ crontab –u user-name -r - для удаления кронтаба юзера 
 var/spool/cron/crontabs/имя_пользователя - тут хранится расписания для пользователя, которое он создал
 
 /etc/crontab - здесь хранится расписание общее
+/etc/cron.d/ФАЙЛ - тут можно создать файл с ссинтасисом как в crontab для выполнения. Тут обычно создаются такие файлы какими либо программами, которые вновь установлены.
+
 /etc/cron.deny - указанные здесь пользователям запрещено пользоваться кроном
 /etc/cron.allow - если данный файл существует, то только те кто указан тут могут пользоваться кроном
+
+                            AT
+
+Позволяет выполнять команды в определенное время один раз, но не по расписанию.
+
+Keyword/Date Format 	        Significance
+midnight 	                    12:00 a.m. 2nd Mar 2025
+noon 	                        12:00 p.m .1st Mar 2025
+tomorrow                       	8:00 a.m. 2nd Mar 2025
+next week 	                    8:00 a.m. 8th Mar 2025
+1630 	                        4:30 p.m. 1st Mar 2025
+4:30 PM Mar 20                 	4:30 p.m. 20th Mar 2025
+now + 2 hours 	                10:00 a.m .1st Mar 2025
+now + 7 days 	                8:00 a.m .8th Mar 2025
+
+sysadmin@localhost:~$ at now - вводишь когда
+at>                          - вводишь команду
+Далее появляется запрос еще одной команды, если надо выйти нажимаешь CTRL+d
+
+sysadmin@localhost:~$ at 1000                                               
+warning:  commands will be executed using /bin/sh
+at> echo “Planning meeting in 30-minutes” > /dev/pts/0
+at>  <EOT>
+job 2 at Mon Feb  10  09:26:00  2025
+
+Выполняет скрипт из файла и отсылает результат на почту юзера
+sysadmin@localhost:~$ at -m -f backup_script.txt  10 pm  Mar 22                                               
+warning:  commands will be executed using /bin/sh
+job 5 at Mon Feb  10  09:33:00  2025
+
+atq - помотреть список jobs (очередь)
+atrm 2 - удалить job под номером 2
+                                BATCH
+
+Команда будет выполнена сразу как нагрузка на проц (load average) упадет до 80% (0.8)
+
+sysadmin@localhost:~$ batch
+at> sort  ~/marketing_data
+at> <EOT>
+job 5 at Mon Feb  3  09:26:00  2025
+
+                        SYSTEMD timers
+
+sudo systemd-run --on-active="1m" /bin/touch /home/sysadmin/newfile - создать таймер создающий файл через минуту
+systemctl list-timers - посмотреть список активных таймеров
+
+Systemd использует два разных типа таймеров; monotonic и realtime. При использовании монотонных таймеров таймер systemd позволяет выполнить задание после того, как произошло событие. Этот тип можно использовать для запуска задания, когда система загружается (опция OnBootSec) или активен модуль systemd (опция OnActiveSec). Приведенный ниже пример файла greeting.timer представляет собой монотонный таймер, который использует опцию OnBootSec для запуска таймера через десять секунд после загрузки системы:                        
+
+    [Unit]
+    Description=Displays greeting after boot
+    
+    [Timer]
+    OnBootSec=10sec
+    Unit=greeting.service
+    
+    [Install]
+    WantedBy=multi-user.target
+
+    Секция 	Описание
+
+[Unit]	
+Общая информация о файле systemd. Description создает удобочитаемое имя для модуля systemd.
+
+[Timer]
+Содержит параметры, определяющие, когда будет запускаться таймер и какую службу выполнять.
+
+[Install]	
+Содержит информацию о том, как будет установлено устройство. Параметр WantedBy= создает символьную ссылку на целевом уровне, которая «хочет», чтобы эта служба работала.
+
+Таймеры реального времени работают как cron и выполняют задание, когда наступило указанное время. Чтобы создать таймер реального времени, следует использовать опцию OnCalendar в разделе [Timer] файла ..timer Формат записи времени OnCalendar:
+
+    DayofWeek Year-Month-Day Hour:Minute:Second
+
+Ниже приведен пример блока таймера, который выполняется каждый день в 9:00 утра:
+
+    OnCalendar=*-*-* 9:00:00
+
 
 
 
@@ -862,7 +946,7 @@ lsblk - вывести инфу о блочных устройствах (что
 rpm -qi - инфа об установленном пакете
 rpm -qp - инфа о неустановленном файле
 rpm -qa - инфа о всех установленныых пакетах 
-rpm -q название_пакета - установден пакет или нет
+rpm -q название_пакета - установлен пакет или нет
 
         Восстановление удаленного файла
 rpm -qas | grep whoami - показывает путь до файла, даже если он был удален
@@ -1722,7 +1806,7 @@ man firewalld.richlanguage - инфа как составлять правила
 sudo firewall-cmd --add-rich-rule='правило' - добавить правило рич рул
 sudo firewall-cmd --remove-rich-rule='правило' - удалить
 
-
+                      
 
                         
 
