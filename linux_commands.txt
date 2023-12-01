@@ -1877,5 +1877,97 @@ sudo firewall-cmd --remove-rich-rule='правило' - удалить
 
                       
 
-                        
+                      TIME
+
+hwclock -r посмотреть системное время 
+
+Functions:
+ -r, --show           display the RTC time
+     --get            display drift corrected RTC time
+     --set            set the RTC according to --date
+ -s, --hctosys        set the system time from the RTC (настроить системное время от аппаратного)
+ -w, --systohc        set the RTC from the system time (настроить аппаратные часы, взяв знасение системного)
+     --systz          send timescale configurations to the kernel
+ -a, --adjust         adjust the RTC to account for systematic drift
+     --predict        predict the drifted RTC time according to --date
+
+Options:
+ -u, --utc            the RTC timescale is UTC
+ -l, --localtime      the RTC timescale is Local
+ -f, --rtc <file>     use an alternate file to /dev/rtc0
+     --directisa      use the ISA bus instead of /dev/rtc0 access
+     --date <time>    date/time input for --set and --predict
+     --delay <sec>    delay used when set new RTC time
+     --update-drift   update the RTC drift factor
+     --noadjfile      do not use /etc/adjtime
+     --adjfile <file> use an alternate file to /etc/adjtime
+     --test           dry run; implies --verbose
+ -v, --verbose        display more details
+
+ -h, --help           display this help
+ -V, --version        display version
+
+root@localhost:~# date "+%m/%d/%y"                                              
+12/17/24
+
+Specifier 	Meaning
+%d 	Day of month (e.g., 30)
+%H 	Hour (0-23)
+%I 	Hour (1-12)
+%m 	Month (1-12)
+%M 	Minute (0-59)
+%S 	Seconds (0-60)
+%T 	Time (%H:%M:%S)
+%u 	Day of week (1-7, 1=Monday)
+%Y 	Year
+%F 	Full date; same as %Y-%m-%d
+
+Создание лога 
+mv app_log app_log_`date +%F`                             
+ls app*                                                   
+    app_log_2025-12-17
+
+ date -s "01/02/2025 3:00:00"  - сменить системное время
+
+                            NTP 
+
+ntpd 
+Option 	Meaning
+-g 	Allow ntpd to be started on a system whose clock has crossed the panic threshold (1000 secs by default)
+-n 	Do not run ntpd as a daemon (i.e., run it as a foreground process)
+-c file_name 	Use the specified file for configuration instead of the default file (the /etc/ntp.conf file)
+-N 	Run at the highest possible priority
+-q 	Quit after setting the time (i.e., one-time synchronization)
+
+/etc/ntp.conf - файл конфигкрации ntp
+
+ntpg -pn - показывает ntp серверы от первых до самых корневых
+
+ntpdate 2.asia.pool.ntp.org - настроить время использу данный сервер 
+так же как 
+ntpd -q 
+
+timedatectl - для систем с systemd
+
+
+chrony
+chronyc - команда для настройки времени
+
+Argument 	Description
+tracking 	Displays performance statistics about the system clock
+
+sources 	Displays the NTP sources being used for chronyd
+
+activity 	 Displays the status of NTP sources
+
+settime <TIME> 	 Allows you to manually set the time used for chronyd. The format for settime can be any of the below:
+
+hh:mm
+
+hh:mm:ss
+
+Month Day, YYYY hh:mm:ss
+
+/etc/chrony.conf- конфиг chronyd
+
 
