@@ -1948,7 +1948,7 @@ ntpdate 2.asia.pool.ntp.org - настроить время использу д�
 ntpd -q 
 
 timedatectl - для систем с systemd
-
+timedatectl set-local-rtc 0 - установить HW часы на UTC
 
 chrony
 chronyc - команда для настройки времени
