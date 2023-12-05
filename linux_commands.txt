@@ -784,7 +784,7 @@ newgrp Название_группы - позволяет пользовател
 
 
 
-                Регулярные выражения 
+                Регулярные выражения (GREP)
     ip a | grep -P '([0-9a-f]{2}:){5}[0-9a-f]{2}' - для поиска мак-адреса
     ip address | grep --colour=always -P "((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})" - для ip адреса
     ip address | grep -P "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" - или такое
@@ -972,29 +972,7 @@ iconv -l выдает список поддерживаемых кодирово
 iconv –f old-encoding [-t new-encoding] file.txt > newfile.txt - синтаксис команды
 
 
-                    TIME (ВРЕМЯ)
-
-/etc/localtime - это конфигурационный файл локального часового пояса, в котором хранится общесистемный часовой пояс локальной системы, используемый приложениями для представления пользователю. Этот файл содержит двоичные данные и не редактируется напрямую.
-
-cat /etc/timezone - показывает текущий часовой пояс
-/usr/share/zoneinfo - содержит все поддерживаемые часовые пояса
-
-tzselect - утилита для установки часового пояса
-Чтобы сделать смену часового пояса постоянной для пользователя, добавьте следующую строку в ~/.profile или ~/.bash_profile в домашнем каталоге пользователя~/.profile
-
-    TZ=’America/Los_Angeles’; export TZ
-
-date MMDDhhmmYYYY.ss - установить дату и время
-date -s “Mon Mar 23 17:00:00 UTC 2020” - или так
-
-Изменение системного часового пояса с помощью метода командной строки
-1. Сохраняем резерывную копию /etc/localtime
-2. Найдите нужный город в каталоге usr/share/zoneinfo
-3. ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime - создать символьную ссылку
-
-Но проще через команду tzselect
-sudo dpkg-reconfigure tzdate - или так 
-
+                    
 
 
 
@@ -1984,9 +1962,6 @@ iptables -D OUTPUT -s 10.10.10.10 -j DROP - удалить данное прав
 
                         ЛОГИРОВАНИЕ (ЛОГ, LOG)
 
-journalctl -f - события в режиме онлайн
-journalctl _UID=0 - события пользователя
-
 syslogd и klogd- раньше были такой демоны для приложений и ядра
 syslog-ng - появился после syslogd, сейчас это отдельный демон, не установленный по умолчанию
 rsyslogd - используется сейчас как альтернатива syslog-ng
@@ -2069,8 +2044,72 @@ weekly/daily/monthly/yearly 	Rotates the logs at the specified time interval
 rotate 4 	Determines how many rotated logs are kept before logrotate deletes older logs
 compress 	Specifies logrotate to compress rotated logs
 missingok 	Tells logrotate not to return an error if the log file is not found
+
+                        Systemd journal
+
+systemd-journald - юнит журнала лога системД
+journalctl -f - события в режиме онлайн
+journalctl _UID=0 - события пользователя
+
+/etc/systemd/journald.conf - файл конфига
+
+Directive 	Purpose
+Storage 	Determines how the journal will be stored. The volatile option keeps the journal only in memory. The persistent option stores the log data on the disk. The auto option stores to the disk also, but will not create a log file it doesn’t already exist. The none option does not store the journal data, but only displays it on the console.
+
+Compress 	Specifies if the journal logs should be compressed or not.
+
+SystemMaxUse 	Limits the amount of space a log can use on the disk. By default, the limit is set to 10% of the total disk space with a cap of 4GB.
+
+SystemMaxFileSize 	Specifies the maximum size that an individual journal file can be before the file is rotated
+
+                        journalctl Флаги
+
+ https://www.digitalocean.com/community/tutorials/how-to-use-journalctl-to-view-and-manipulate-systemd-logs-ru                       
+
+journalctl --utc - время в формате UTC
+-b - отобразить все логи с момента старта системы
+-u название_юнита - инфа только поьданному юниту
+-n цифра - отобразить n-ое количество строк
+-r - отобразить лог начиная с новых записей 
+journalctl --list-boots - инфа о сеансах загрузки
+journalctl --vacuum-time=7d - стереть все логи старше 7 дней
+
+systemd-nspawn --directory /mnt/failedsys --boot -- --unit rescue.target - утилита позводяющая получить доступ к журналу событий дргой системы, которая не может загрузится. Предварительно разумется нужно примонтировать диск поврежденно системы загрузившить с live cd
+
+systemd-cat - программа для тестирования, как logger (см.выше)
+ps | tee /dev/tty1 | systemd-cat - может через | принимать на вход вывод другой команды
+
+
+
+
+
+
                       TIME
 
+TIME (ВРЕМЯ)
+
+/etc/localtime - это конфигурационный файл локального часового пояса, в котором хранится общесистемный часовой пояс локальной системы, используемый приложениями для представления пользователю. Этот файл содержит двоичные данные и не редактируется напрямую.
+
+cat /etc/timezone - показывает текущий часовой пояс
+/usr/share/zoneinfo - содержит все поддерживаемые часовые пояса
+
+tzselect - утилита для установки часового пояса
+Чтобы сделать смену часового пояса постоянной для пользователя, добавьте следующую строку в ~/.profile или ~/.bash_profile в домашнем каталоге пользователя~/.profile
+
+    TZ=’America/Los_Angeles’; export TZ
+
+date MMDDhhmmYYYY.ss - установить дату и время
+date -s “Mon Mar 23 17:00:00 UTC 2020” - или так
+
+Изменение системного часового пояса с помощью метода командной строки
+1. Сохраняем резерывную копию /etc/localtime
+2. Найдите нужный город в каталоге usr/share/zoneinfo
+3. ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime - создать символьную ссылку
+
+Но проще через команду tzselect
+sudo dpkg-reconfigure tzdate - или так 
+
+                
 hwclock -r посмотреть системное время 
 
 Functions:
