@@ -1909,7 +1909,10 @@ service fail2ban restart - надо рестартануть сервис пос
 
                     IPTABLES 
 
-https://timeweb.com/ru/community/articles/nastroyka-iptables-dlya-chaynikov                    
+https://losst.pro/nastrojka-iptables-dlya-chajnikov        
+
+https://blog.xenot.ru/nastrojka-iptables-dlya-zashhity-servera-na-ubuntu-20-04-lts-v-2022-godu.fuck
+
                 
 Примеры действий:
 
