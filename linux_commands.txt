@@ -1981,6 +1981,94 @@ iptables -D OUTPUT -s 10.10.10.10 -j DROP - удалить данное прав
 Данная команда удалит из таблицы filter цепочки INPUT правила с номерами 2. Нумерация правил начинается с 1.
 
 
+
+                        ЛОГИРОВАНИЕ (ЛОГ, LOG)
+
+journalctl -f - события в режиме онлайн
+journalctl _UID=0 - события пользователя
+
+syslogd и klogd- раньше были такой демоны для приложений и ядра
+syslog-ng - появился после syslogd, сейчас это отдельный демон, не установленный по умолчанию
+rsyslogd - используется сейчас как альтернатива syslog-ng
+/etc/rsyslog.conf - файл конфигурации rsyslogd
+/etc/rsysylod.d/50-default.conf - сак же стандартный файл конфигурации. В этой папке можно создавать файлы.
+Частичный вывод: 
+    auth,authpriv.*                 /var/log/auth.log
+    *.*;auth,authpriv.none          -/var/log/syslog
+    #cron.*                         /var/log/cron.log
+    #daemon.*                       -/var/log/daemon.log
+    kern.*                          -/var/log/kern.log
+    #lpr.*                          -/var/log/lpr.log
+    mail.*                          -/var/log/mail.log - директория для записи лога
+    #user.*                         -/var/log/user.log
+
+Соcтоит из селектора (mail.*) и action (-/var/log/mail.log) (директория для записи лога).
+Селектор состоит из facility and a priority, separated by a period . 
+
+    Priority    Description
+
+debug 	For debugging only
+info 	Informational messages
+notice 	Things that might merit investigation
+Warning (or warn) 	Warning messages
+err 	Other error conditions
+crit 	Critical conditions
+alert 	Urgent situations
+emerg (or panic) 	Panic situations
+
+Пример:
+
+    Selector 	Description
+
+*.* 	All facilities and priorities
+*.info 	All facilities at info priority or higher
+kern.* 	Select all kernel messages
+mail.warning 	Messages from the mail facility at a warning priority or higher
+cron,lpr.err 	Messages from the cron or lpr facility at an err priority or higher
+cron.err;cron.!alert 	Messages from the cron facility at an err priority or higher, but not at alert priority
+mail.=err 	Only err messages from the mail facility
+*.info;mail.none;lpr.none 	Select messages from all facilities except mail and lpr
+
+    Action 	Description
+
+/path/to/file 	Specify the full absolute path for the log file
+
+-/path/to/file 	The - before the path means to not sync after writing each log message (better for system performance for log files that are often written to, such as mail log files on a mail server)
+
+|/path/to/named/pipe 	Specify a pipe symbol and a path to a named pipe file created with mkfifo (make first-in, first-out)
+
+/dev/tty10 	Specify a terminal or console, such as /dev/console
+
+@10.0.0.1 	Specify an @ symbol with the IP address or resolvable hostname or a remote host
+
+student,maya,joe 	Specify a list of users whose terminals will have the message
+displayed if the users are currently logged into the system
+
+* 	Send to the terminal of everyone who is logged in
+
+
+logger - команда для тестирования логов
+
+Option 	Purpose
+
+-i 	Log the process id of the logger process
+-s 	Log the message to standard error and the system log
+-f file 	Use the message found in the specified file
+-p selector 	Send the message as the selector like mail.info
+-t tag 	Mark the message line in the log with a tag
+
+logger -t TEST -p mail.err 'Testing mail.err entry'
+
+logrotate - прога для ротации логов
+/etc/logrotate.conf - файл конфига
+/etc/logrotate.d/ - тут конфиги для ротации только определенных сервисов
+
+Directive 	                    Purpose
+
+weekly/daily/monthly/yearly 	Rotates the logs at the specified time interval
+rotate 4 	Determines how many rotated logs are kept before logrotate deletes older logs
+compress 	Specifies logrotate to compress rotated logs
+missingok 	Tells logrotate not to return an error if the log file is not found
                       TIME
 
 hwclock -r посмотреть системное время 
