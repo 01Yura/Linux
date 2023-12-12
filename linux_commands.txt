@@ -759,6 +759,41 @@ SGID setgid для директории,g+s, 2000 - все файлы созда
 sticky bit o+t, 1000 - на папке, тогла файлы в этой папке может удалить только влпделец папки
 umask - узнать маску разрешений (обратная маска, 777 для папок, 666 для файлов)
 
+find / -type f -perm -4000 2>/dev/null | less - найти все файлы с SUID 
+find / -type f -perm -2000 2>/dev/null | less - тоже но с SGID
+find / -perm -4000 -o -perm -2000 -ls 2>/dev/null | less - детальный вывод с опциями -o и -ls
+
+find / -perm -4000 -o -perm -2000 -ls 2>/dev/null > ~/special.perm - направить вывод в спец файл в своей директории, чтобы в дальнейшем сравнивать его с тем что есть сейчас
+find / -perm -4000 -o -perm -2000 -ls 2>/dev/null > ~/current.perm; diff ~/special.perm ~/current.perm - сравнение
+
+find / -user root -perm -u+x - найти все файлы имеющие SUID рута
+
+
+visudo - спец редактор для редактирования etc/passwd, который проверяет правильность синтаксиса в файле
+
+su - - Start the new user’s login shell and execute the initialization (.rc) files providing an environment (i.e., variables, aliases, home directory, etc.) similar to what the user would expect had the user logged in directly.
+su -l - тоже
+su - root - тоже
+
+su joe - переключится на пользователя, но не считывать инициализациооные файлы
+
+passwd testuser1 - сменить пароль юзеру
+chage -d 0 testuser1 - принудительно сбросить срок действия пароля в 0
+    или так
+sudo passwd -e testuser1 - так же сбросит срок действия и при следующем входе в систему ему буднт предложено сменить пароль
+
+
+passwd -l ИМЯ- заблочить юзера
+    или так
+usermod -L testuser1
+
+passwd -u ИМЯ - разлочить юзера
+    или так
+usermod -U testuser1
+
+/etc/login.defs
+/etc/default/useradd - оба эти файла содержат инфу о сроках действия пароля для новых юзеров
+
 
 Читать:
     В file это позволяет процессам считывать содержимое файла, что означает, что содержимое может быть просмотрено и скопировано.
@@ -813,7 +848,46 @@ chown .group /path/to/file
 разрешение -x для директории разрешает пользователю команду cd, если у каталога нет разрешения -x, 
 то в папку не войти, нельзя посмотреть что внутри, и нельзя производить никакие действия с фыайлами внутри. Если попытаться открыть файл текстовым редвктором, то он откроется но ничего не покажет.
 
+Перевод 8 – 2
+Перенос восьмеричного числа в двоичный формат – это самый простой способ перевода чисел. Каждой восьмеричной цифре ставится в соответствие группа двоичных цифр в количестве трех. Эта группа называется триадой.
+И, наоборот, при переводе двоичного числа в восьмеричный формат производится замена трех двоичных цифр одной восьмеричной. Разбивка целого двоичного числа на трехзначные звенья производится справа налево. Когда крайняя триада получается неполной, то ее дополняют нулями.
 
+Подробнее: https://obrazovaka.ru/informatika/vosmerichnaya-sistema-schisleniya-kak-perevodit.html
+
+vipw - команда для редактирования важных системных файлов
+
+lsof - показать все файлы открытые в системе
+lsof -u sysadmin - все файлы открытые юзером
+fuser - команда показывающая какие процессы используют данный файл иди директорию
+fuser /home/username
+fuser -av / - отобразить еще и имя
+
+ulimit -a - посмотреть свои ограничения
+    core file size          (blocks, -c) 0                                          
+    data seg size           (kbytes, -d) unlimited                                  
+    scheduling priority             (-e) 0                                          
+    file size               (blocks, -f) unlimited                                  
+    pending signals                 (-i) 515165                                     
+    max locked memory       (kbytes, -l) 64                                         
+    max memory size         (kbytes, -m) unlimited                                  
+    open files                      (-n) 1024                                       
+    pipe size            (512 bytes, -p) 8                                          
+    POSIX message queues     (bytes, -q) 819200                                     
+    real-time priority              (-r) 0                                          
+    stack size              (kbytes, -s) 8192                                       
+    cpu time               (seconds, -t) unlimited                                  
+    max user processes              (-u) 1048576                                  
+    virtual memory          (kbytes, -v) unlimited                                  
+    file locks                      (-x) unlimited
+
+/etc/security/limits.conf - файл содержащий эти ограничения
+/etc/security/limits.d - сюда можно поместить файл *.conf
+<domain> <type> <item> <value>
+
+who - кто находится в системе
+
+last - показывает историю входа в ситему из файла /var/log/wtmp
+ 
 
 
 > файл- стандартный поток вывода в файл (работает справа налево)
@@ -1505,6 +1579,10 @@ CTRL-B - режим ввода команд
 CTRL-B+d - detach сессию
 CTRL-B+% - новая сессия по горизонтали
 CTRL-B+" - новая сессия по вертикали
+
+https://habr.com/ru/articles/327630/
+
+
 
 
 
