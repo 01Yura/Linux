@@ -769,7 +769,24 @@ find / -perm -4000 -o -perm -2000 -ls 2>/dev/null > ~/current.perm; diff ~/speci
 find / -user root -perm -u+x - найти все файлы имеющие SUID рута
 
 
-visudo - спец редактор для редактирования etc/passwd, который проверяет правильность синтаксиса в файле
+visudo - спец редактор для редактирования etc/sudoers, который проверяет правильность синтаксиса в файле
+visudo - просто введя висудо, попадаем в режим редактирования /etc/sudoers
+    # User privilege specification                                                  
+    root    ALL=(ALL:ALL) ALL                                                       
+    test    ALL=(ALL:ALL) /etc/init.d/ssh - так можно добавить пользователя, чтобы он мог выполнять определенную команду импользуя sudo
+
+sudo -K - сбрасывает пароль введенный ранее, попросит снова при вводе команды sudo
+
+vipw - редактирование /etc/passwd
+vigr - редактирование /etc/group
+vipw -s - ред /etc/shadow
+vigr -s - ред /etc/gshadow
+
+https://wiki.archlinux.org/title/Sudo_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)
+
+https://www.8host.com/blog/redaktirovanie-fajla-sudoers-v-ubuntu-i-centos/
+
+
 
 su - - Start the new user’s login shell and execute the initialization (.rc) files providing an environment (i.e., variables, aliases, home directory, etc.) similar to what the user would expect had the user logged in directly.
 su -l - тоже
@@ -888,6 +905,7 @@ who - кто находится в системе
 
 last - показывает историю входа в ситему из файла /var/log/wtmp
  
+chsh - сменить оболочку
 
 
 > файл- стандартный поток вывода в файл (работает справа налево)
@@ -1105,6 +1123,8 @@ groupdel - удаление группы
 
 useradd -D - значения по умолчанию при создании пользователя, хранятся в файле   /etc/default/useradd
 useradd -g - создать пользователя, но использовать де дефолтную группу а другую
+
+mkhomedir_helper ИМЯ - создает дом папку для пользователя, если ее нет
 
 /etc/login.defs - инфа о насройках при создании юзера
 
