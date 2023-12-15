@@ -1681,8 +1681,15 @@ scp root@194.87.199.75:/home/yura/test.txt /home/ubuntu - скопировать
 
 root@Debian:/etc/ssh# ssh-keygen -l -E md5 -f ssh_host_rsa_key.pub 
 3072 MD5:f7:55:20:fe:8f:ed:2f:af:2f:6a:5a:33:7b:51:1f:05 - посмотреть фингерпринт ключа на сервере, который должен высвечиваться намклиенте при первом подключении к серверу 
+или
+ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa_key.pub - отобразить фингерпринт своего хоста
+
 
 ssh-keygen -lf ~/.ssh/id_rsa.pub - или так
+
+ssh-keygen -f ~/.ssh/known_hosts -R localhost - удалить стороку из known_hosts
+
+
 
 Можно создать файл /etc/ssh/ssh_known_hosts и добавить туда строку из /home/user/.ssh/known_hosts, чтобы на уровне системы не спрашивало подключаться или нет
 
@@ -1692,6 +1699,8 @@ ssh-add /home/user/.ssh/id-rsa - добавляем приватный ключ 
 Теперь спрашивать не будет каждый раз
 
 ssh-keygen –p - зменить парольную фразу
+
+
 
                 ТУННЕЛИ SSH 
 
