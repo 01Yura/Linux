@@ -1315,7 +1315,30 @@ newgrp Название_группы - позволяет пользовател
     Выражение "^$" соответствует пустой строке.
     grep  -E -v "(^#|^$)" - убрать комментарии и пустые строки
 
+                    Extended Regular Expressions
 
+    Extended Regex 	Operators 	Meaning
+Grouping operator 	( ) 	Groups characters together to form a subpattern.
+Asterisk operator 	* 	Previous character (or subpattern) is present zero or more times.
+Plus operator 	+ 	Previous character (or subpattern) is present at least one or more times.
+Question mark operator 	? 	Previous character (or subpattern) is present zero or one time (but not more).
+Curly brace operator 	{,} 	Specify minimum, maximum, or exact matches of the previous character (or subpattern).
+Alternation operator 	| 	Logical OR of choices. For example, abc|def|xyz matches abc or def or xyz.
+
+По дефолту grep использует только основыные регулярные выражения и интерпретирует знаки расширеных регулярных выражений как обычные символы +, ?, {, |, (, and )
+Надо использовать grep -E 
+
+
+Pattern 	Meaning
+a{0,} 	Zero or more a characters
+a{1,} 	One or more a characters
+a{0,1} 	Zero or one a characters
+a{5} 	Five a characters
+a{,5} 	Five or fewer a characters
+a{3,5} 	From three to five a characters
+
+fgrep - используется чтобы не экранировать ничего
+    cat newhome.txt | fgrep '**'
 
     BASH 
     echo $? - показывает код возврата последней команды (0 или не 0). Эта переменная хранит последний код возврата. Названия переменных начинаются со знака $.
