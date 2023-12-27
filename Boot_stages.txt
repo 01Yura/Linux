@@ -28,7 +28,18 @@ SECOND BOOTLOADER
 Загрузчик знает где лежит ядро, знает его параметры загрузки (можно настроить), грузит ядро в RAM, грузит Initial Ram disk (initrd - содержит конфиг файлы и модули для загрузки ядра)
 Можно загрузить ядро в режиме обслуживания
 
-настройки GRUB2 лежат в /boot/grub/grub.cfg
+GRUB
+
+/boot/grub/grub.cfg - содержит настройки, но его изменять нельзя (в RedHat /boot/grub2/grub.cfg)
+/etc/default/grub - можно изменять
+update-grub - обновить инфу после смены настройке (для Debian)
+
+grub-mkconfig - команда чтобы создать конфиг граба 
+grub2-mkconfig -o /boot/grub2/grub.cfg - сделает новый конфиг (для RedHat)
+grub-md5-crypt - для задания пароля на grub
+
+/sbin/grub2-install /dev/sda - установить grub2
+после установки надо сгенерировать конфиг 
 
 KERNEL STAGE
 7. Ядро (kernel)
