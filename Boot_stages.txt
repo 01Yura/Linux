@@ -30,12 +30,23 @@ SECOND BOOTLOADER
 
 GRUB
 
+GRUB Legacy может иметь один или оба из следующих двух основных конфигурационных файлов: файлы /boot/grub/menu.lst и /boot/grub/grub.conf В зависимости от дистрибутива один файл предпочтительнее другого. В качестве примера можно привести дистрибутивы Red Hat, ориентированные на файл grub.conf, и дистрибутивы SUSE, предпочитающие использовать файл menu.lst Во многих дистрибутивах один из этих файлов просто существует как символическая ссылка на другой.
+
+Not only does GRUB Legacy not distinguish between SATA and IDE drives, it also doesn't number drives with letters like the operating system does. For example, the first hard drive is 0, not a.
+Additionally, the partition numbers are different. The operating system numbers the first partition of a drive 1, while for GRUB Legacy it would be partition 0.
+For example, the device /dev/sda1 might be referred to as hd0,0 in GRUB Legacy. The device /dev/hdb3 might be hd1,2 in GRUB Legacy. The term "might be" is used because the drive number really depends on the order in which GRUB Legacy "finds" the drives.
+
 /boot/grub/grub.cfg - содержит настройки, но его изменять нельзя (в RedHat /boot/grub2/grub.cfg)
 /etc/default/grub - можно изменять
 update-grub - обновить инфу после смены настройке (для Debian)
+grub2-mkconfig - обновить инфу после смены для RedHat
 
-grub-mkconfig - команда чтобы создать конфиг граба 
-grub2-mkconfig -o /boot/grub2/grub.cfg - сделает новый конфиг (для RedHat)
+
+grub-mkconfig - команда чтобы создать конфиг граба
+Команда grub-mkconfig запросит у работающей системы содержимое каталога /boot, содержимое каталога /etc/default/grub, если оно существует, и все скрипты, расположенные в каталоге /etc/grub.d /etc/default/grub
+Затем он выведет правильно отформатированный конфигурационный файл в указанное место:
+grub2-mkconfig -o /boot/grub2/grub.cfg - сделает новый конфиг (для RedHat) (-o указывает место вывода)
+
 grub-md5-crypt - для задания пароля на grub
 
 /sbin/grub2-install /dev/sda - установить grub2
@@ -43,6 +54,29 @@ grub-md5-crypt - для задания пароля на grub
 
 
 Директивы GRUB LEGASY для /boot/grub/grub.conf
+ grub.conf содержит по крайней мере три директивы: root, kernel и initrd. Эти title надписи определяют загружаемую операционную систему, а также параметры ядра, указывающие, как загрузить операционную систему и initrd.
+
+#global options
+default=0
+fallback=1
+timeout=5
+splashimage=(hd0,0)/grub/splash.xpm.gz
+hiddenmenu
+password notencypted
+
+#bootable title sections
+title CentOS (2.6.32-358.6.1.el6.i686)
+	root (hd0,2)
+	kernel /vmlinuz-2.6.32-358.6.1.el6.i686 ro root=/dev/mapper/vg_livecd-lv_root rd_NO_LUKS LANG=en_US.UTF-8 rd_LVM_LV=vg_livecd/lv_swap rd_NO_MD rd_LVM_LV=vg_livecd/lv_root SYSFONT=latarcyrheb-sun16 crashkernel=auto  KEYBOARDTYPE=pc KEYTABLE=us rd_NO_DM rhgb quiet
+	initrd /initramfs-2.6.32-358.6.1.el6.i686.img
+title CentOS (2.6.32-358.2.1.el6.i686)
+	password --md5 $1$D20Ia1$iN6djlheGF0NQoyerYgpp/
+	root (hd0,2)
+	kernel /vmlinuz-2.6.32-358.2.1.el6.i686 ro root=/dev/mapper/vg_livecd-lv_root rd_NO_LUKS LANG=en_US.UTF-8 rd_LVM_LV=vg_livecd/lv_swap rd_NO_MD rd_LVM_LV=vg_livecd/lv_root SYSFONT=latarcyrheb-sun16 crashkernel=auto  KEYBOARDTYPE=pc KEYTABLE=us rd_NO_DM rhgb quiet
+	initrd /initramfs-2.6.32-358.2.1.el6.i686.img
+title OtherOS (Windows)
+	rootnoverify (hd0,0)
+	chainloader +1
 
 Директива 	Значение
 default= 	Указывает заголовок, который будет пытаться загрузиться по умолчанию по истечении времени ожидания в секундах.
@@ -57,6 +91,27 @@ initrd 	В этой строке должен быть указан началь
 password 	Этот параметр может быть использован либо как глобальный параметр, либо как параметр заголовка. При глобальном задании пользователь должен ввести указанный пароль перед добавлением, редактированием или использованием командной строки GRUB Legacy. В качестве опции заголовка требуется, чтобы пользователь ввел пароль, прежде чем GRUB попытается загрузить заголовок.
 rootnoverify 	Эта директива используется для указания загрузочного раздела для операционной системы, отличной от Linux.
 chainloader 	Используется для указания пути к другому загрузчику или +1, если загрузчик находится в первом секторе раздела, указанном директивой rootnoverify.
+
+Это etc/default/grub:
+
+GRUB_TIMEOUT=5
+GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
+GRUB_DEFAULT=saved
+GRUB_SAVEDEFAULT=true
+# GRUB_TERMINAL="serial console"
+# GRUB_SERIAL_COMMAND="serial --unit=0 --speed=9600"
+GRUB_CMDLINE_LINUX="quiet rhgb"
+GRUB_DISABLE_RECOVERY="true"
+
+Чтобы сделать второй пункт меню пунктом меню по умолчанию, администратор должен выполнить:
+    grub-set-default 1
+
+Если GRUB 2 необходимо установить или переустановить, то администратор выполнит:
+    /sbin/grub2-install /dev/sda
+После установки GRUB 2 необходимо сгенерировать конфигурационный файл в первый раз. В дистрибутиве, основанном на Fedora, администратор должен выполнить:
+    grub2-mkconfig -o /boot/grub2/grub.cfg
+В дистрибутиве на основе Ubuntu администратор выполнит:
+    update-grub
 
 KERNEL STAGE
 7. Ядро (kernel)
@@ -173,6 +228,7 @@ initctl - аналог systemctl в systemd
 chkconfig --list НАЗВАНИЕ_ДЕМОНА - показывает что запускается, а что нет на всех уровнях
 chkconfig on НАЗВАНИЕ_ДЕМОНА
 chkconfig off НАЗВАНИЕ_ДЕМОНА
+chkconfig --level 24 atd on - включить службу atd на уровне 2 и 4
 
 halt, poweroff, shutdown - выключть 
 shutdown now
@@ -190,6 +246,9 @@ etc/rc0-6.d - в этих папках расположены службы (де
 Ссылки начинаются с буква S и цифры:
      S01ssh -> ../init.d/ssh
 
+/etc/rc.d/init.d/httpd stop - например для систем с традиционным ИНИТ службы хранятся тут, и их можно остановить и запустить
+
+Вместо того, чтобы вводить полный путь к сценарию, многие системы предоставляют service скрипт, который позволяет выполнять сценарий init без необходимости вводить полный путь к сценарию
 service sshd start/stop/status, 
     restart - stop and then start 
     reload - read and load configuration
