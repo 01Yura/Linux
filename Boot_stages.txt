@@ -100,7 +100,7 @@ GRUB_DEFAULT=saved
 GRUB_SAVEDEFAULT=true
 # GRUB_TERMINAL="serial console"
 # GRUB_SERIAL_COMMAND="serial --unit=0 --speed=9600"
-GRUB_CMDLINE_LINUX="quiet rhgb"
+GRUB_CMDLINE_LINUX="quiet rhgb"  # сюда можно прописать постоянные параметры загрузки
 GRUB_DISABLE_RECOVERY="true"
 
 Чтобы сделать второй пункт меню пунктом меню по умолчанию, администратор должен выполнить:
@@ -112,6 +112,8 @@ GRUB_DISABLE_RECOVERY="true"
     grub2-mkconfig -o /boot/grub2/grub.cfg
 В дистрибутиве на основе Ubuntu администратор выполнит:
     update-grub
+
+cat /proc/cmdline - посмотреть опции загрузки ядра
 
 KERNEL STAGE
 7. Ядро (kernel)
@@ -155,6 +157,10 @@ runlevel - посмотреть текщий уровень выполнения
 who -r - тоже
 init НОМЕР - сменить runlevel немедленно
 telinit НОМЕР - аналогично
+telinit q - restore configuration, после изменения конфига файла /etc/inittab
+
+
+Сценарии, используемые init для установки каждого уровня запуска, хранятся в каталоге /etc/init.d/ Каждый уровень запуска имеет связанный каталог в /etc/, именуемый /etc/rc0.d/, /etc/rc1.d/, /etc/rc0.d/ и т.д., со сценариями, которые должны выполняться при запуске соответствующего уровня запуска. Поскольку один и тот же сценарий может использоваться разными уровнями запуска, файлы в этих каталогах являются просто символическими ссылками на реальные сценарии в /etc/init.d/ Кроме того, первая буква имени файла ссылки в каталоге уровня запуска указывает, должна ли служба быть запущена или завершена для соответствующего уровня запуска. Имя файла ссылки, начинающееся с буквы K, определяет, что служба будет уничтожена при входе на уровень запуска (kill). Начиная с буквы S, сервис будет запускаться при входе в уровень запуска (start). Например, в каталоге /etc/rc1.d/ будет много ссылок на сетевые скрипты, начинающиеся с буквы K, учитывая, что уровень запуска 1 является однопользовательским уровнем запуска без подключения к сети.
 
                SYSTEMD
 
@@ -179,6 +185,7 @@ Systemd монтирует файловую систему согласно фа
 
 systemctl - команда для управления systemd. Расшифровывается как System control
 
+systemctl list-unit-files - показать вообще все юниты
 systemctl list-units - показывает все запущенные юниты
 systemctl --failed - юниты которые по какой то причине не запустились
 systemctl list-units --type=service - показать только сервисы
@@ -196,8 +203,11 @@ systemctl isolate desired.target - чтобы сменить ранлевел т
 systemd.unit=desire.target - изменить ранлевел при загрузке, вписав его как параметр загрузки ядра
 или
 systemctl set-default -f multi-user.target - -f это форсировать, те перезаписать вмето того, который есть
+systemctl get-default - посмотреть установленный для загрузки runlevel
 
 systemctl hibernate/suspend/poweroff/reboot 
+systemctl suspend - put the system in low power mode, keeping current data in memory
+systemctl hibernate - copy all memory data to disk, so the current state of the system can be recovered after powering it off
 
 systemctl list-dependencies graphical.target
 
@@ -214,6 +224,9 @@ RUNLEVELS
 
 
                 UPSTART
+
+Upstart was developed for the Ubuntu Linux distribution to help facilitate parallel startup of processes. Ubuntu has stopped using Upstart since 2015 when it switched from Upstart to systemd.
+
 /etc/init -  тут хранятся все jobs (файлы с расширением .conf) На лабораторных машинах netacad эта директория есть тока на centos
 
 /etc/init.d - тоже хранятся службы
@@ -224,6 +237,7 @@ RUNLEVELS
                 в /etc/init/rc-sysinit.conf
 
 initctl - аналог systemctl в systemd
+initctl list - показать все сервисы, их состояние и PID
 
 chkconfig --list НАЗВАНИЕ_ДЕМОНА - показывает что запускается, а что нет на всех уровнях
 chkconfig on НАЗВАНИЕ_ДЕМОНА
@@ -236,6 +250,7 @@ shutdown now "СООБЩЕНИЕ ДЛЯ ВСЕХ ПОЛЬЗОВАТЕЛЕЙ"
 shutdown -r - перезагрузка
 shutdown +10 - выключить через 10 мини
 shutdown -h - halt
+shutdown -c - отменить запущенное по расписанию выключение
 
 wall
 echo -e "СООБЩЕНИЕ ВСЕМ" | wall - сообщение всем пользователям
