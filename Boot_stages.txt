@@ -36,6 +36,8 @@ Not only does GRUB Legacy not distinguish between SATA and IDE drives, it also d
 Additionally, the partition numbers are different. The operating system numbers the first partition of a drive 1, while for GRUB Legacy it would be partition 0.
 For example, the device /dev/sda1 might be referred to as hd0,0 in GRUB Legacy. The device /dev/hdb3 might be hd1,2 in GRUB Legacy. The term "might be" is used because the drive number really depends on the order in which GRUB Legacy "finds" the drives.
 
+Grub legasy именует все с 0, например sda1 будет hd(0,0), а Grub2 - диск именуте с 0, а партицию с 1, напрмер sda1 будет hd(0,1)
+
 /boot/grub/grub.cfg - содержит настройки, но его изменять нельзя (в RedHat /boot/grub2/grub.cfg)
 /etc/default/grub - можно изменять
 update-grub - обновить инфу после смены настройке (для Debian)
