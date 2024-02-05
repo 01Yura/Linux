@@ -50,7 +50,9 @@ True, если файл имеет разрешение на запись для
 True, если файл имеет разрешение на выполнение для текущего пользователя
 	-x 	-x file
 
-
+-s FILENAME 	if file exists and its size is more than 0
+    
+    
     if test $var –eq 7
 
     ... Вы могли бы написать:
@@ -96,6 +98,17 @@ exec - команда подменяющая bash собой
 
 $? - это переменная в которой хранится статус выполнения команды. 0 при успешном выполнении и не 0 - при неудаче
 
+echo 'Enter username : '
+read username
+Ввод будет осуществляться с новой строки
+
+echo -n 'Enter username : '
+read username
+Ввод будет продолжение строки 'Enter username : '
+
+read -p 'Enter username : ' username
+echo $username
+Можно сразу исрользовать read -p, чтобы не вводить комнаду echo
 
     #!/bin/bash
     
@@ -166,7 +179,7 @@ grep -E -v '^[0-9]{5}$': Эта часть использует утилиту g
 
 
 Скрипт создания юзеров:
-#!/bin/bash                                                                     
+#!/bin/bash                                                                  
     echo -e "User\tPassword" > /root/password                                       
     echo -e "----\t--------" >> /root/password                                      
                                                                                     
