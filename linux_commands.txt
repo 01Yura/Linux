@@ -1460,8 +1460,8 @@ oga@uho:~$ ls -lL /dev/cdrom
 
 useradd - надо запускать с параметрами, иначе не будет домашнего каталога
 switch 	meaning
--d 	    home directory (-d /home/user)
--m 	    create home directory
+-d 	    home directory (-d /home/user) чтобы указать другую дректорию чем дефолтная
+-m 	    create home directory (если не указать, то дом директории не будет создано)
 -s 	    specify shell
 -G 	    add to additional groups
 -c 	    comment. most of the time, users actual name. Use quotes if comments has spaces   or special characters in them
@@ -1505,7 +1505,7 @@ getent passwd/shadow/group - можно смотреть файлы
 
 Предложит несколько вопросов, ответив на которые, мы полностью сконфигурируем будущего пользователя, в том числе и его пароль.
 Если нам понадобится изменить параметры для уже созданного пользователя, поможет утилита usermod. Параметры аналогичны утилите useradd. Также её можно использовать для блокировки/разблокировки пользователей. Опция -L позволит заблокировать учётную запись. Операция блокировки добавляет символ «!» в начало пароля в файле /etc/shadow. Параметр -U снимает блокировку. Для удаления учётной записи предназначена утилита userdel. Полезный ключ -r удаляет из системы домашний каталог пользователя. 
-Двойной ! (!!) сигнализирует, что пароль никогда не был установлен. 
+Двойной ! (!!) сигнализирует, что пароль никогда не был установлен. (спорно???)
 
 usermod
 switch 	meaning
@@ -2367,11 +2367,9 @@ root@Debian:/etc/ssh# ssh-keygen -l -E md5 -f ssh_host_rsa_key.pub
 3072 MD5:f7:55:20:fe:8f:ed:2f:af:2f:6a:5a:33:7b:51:1f:05 - посмотреть фингерпринт ключа на сервере, который должен высвечиваться намклиенте при первом подключении к серверу 
 или
 ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa_key.pub - отобразить фингерпринт своего хоста
-
-
 ssh-keygen -lf ~/.ssh/id_rsa.pub - или так
 
-ssh-keygen -f ~/.ssh/known_hosts -R localhost - удалить стороку из known_hosts
+ssh-keygen -f ~/.ssh/known_hosts -R IP_адрес_сервера - удалить стороку из known_hosts
 
 
 
@@ -2394,7 +2392,7 @@ ssh first_ssh_server -N -L localport:dest_server:remore_port -
 ssh -X remote_host - так можно запускать графические приложения удаленной машины у себя на компе
 Далее вводим команду, например firefox, и firefox открывается на нашем компе, но отображает инфу как будто мы открыли его на удаленном компе
 
-ssh devuser@dev.netdevgroup1.com -R 8000:192.168.1.12:8000 - выполняем на соем компе, чтоюы дать возможность подключится на порт 8000 к нашеиу хосту тем devuser ользователям, кто находится на сервере dev.netdevgroup1.com
+ssh devuser@dev.netdevgroup1.com -R 8000:localhost:80 - выполняем на сdоем компе, чтоюы дать возможность подключится на порт 80 к нашеиу хосту тем devuser пользователям, кто находится на сервере dev.netdevgroup1.com. То есть пользоватеди с сервера devuser@dev.netdevgroup1.com могут ввести у себя в браузере localhost:8000 и они попадут на мой комп на порт 80.
 
             ШИФРОВАНИЕ GPG
 
