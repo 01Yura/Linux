@@ -478,13 +478,17 @@ modprobe -r ext4 - выгрузить модуль
 
 modprobe -l - список всех доступных молулей
 modinfo snd  - доп инфа о каком-либо модуле
-modeinfo -p nouveau - параметры запуска модуля (Nouveau Project - alternative to the proprietary drivers for NVIDIA GPU cards)
+modeinfo -p nouveau - параметры запуска модуля (Nouveau Project (нуво) - alternative to the proprietary drivers for NVIDIA GPU cards)
 
 Customized parameters for a module can be made persistent by including them in the file /etc/modprobe.conf or in individual files with the extension .conf in the directory /etc/modprobe.d/
 
 Option modeset, for example, allows to control whether display resolution and depth will be set in the kernel space rather than user space. Adding options nouveau modeset=0 to the file /etc/modprobe.d/nouveau.conf will disable the modeset kernel feature.
 
 If a module is causing problems, the file /etc/modprobe.d/blacklist.conf can be used to block the loading of the module. For example, to prevent the automatic loading of the module nouveau, the line blacklist nouveau must be added to the file /etc/modprobe.d/blacklist.conf. This action is required when the proprietary module nvidia is installed and the default module nouveau should be set aside.
+
+https://devicehunt.com - сайт для поиска оборудования из файда /lim/modules/mmodules.alias
+
+dmesg -wH - смотреть онлайн лог ядра, например всавляешь флешку и сморишь увидело ли ее ядро
 
 Для старых убунту файл конфигурации сети хранится:
 /etc/network/interfaces 
@@ -1093,8 +1097,45 @@ SGID setgid для файла - g+s , 2000 - позволяет запускат
 SGID setgid для директории - g+s, 2000 - все файлы создаваемые в этой папке будут принадлежать владельцу директории. 
 sticky bit o+t, 1000 - на папке, тогла файлы в этой папке может удалить только влпделец папки
 umask - узнать маску разрешений (обратная маска, 777 для папок, 666 для файлов)
+umask -S
     777 - umask = Permission
     777 - 026 = 751 (rwxr-x--x)
+
+                    ACL 
+
+ll file1
+    -rw-r--r-- 1 root root 4 Feb 19 02:31 file1
+
+getfacl file1     - показать все права ACL
+    # file: file1
+    # owner: root
+    # group: root
+    user::rw-
+    group::r--
+    other::r--
+
+setfacl -m u:yura:rwx file1 - модифицировать (-m) юзеру (u) yura права rwx на file1
+
+ll file1
+    -rw-rwxr--+ 1 root root 4 Feb 19 02:31 file1* - знак + указывает на наличие ACL прав
+
+getfacl file1
+    # file: file1
+    # owner: root
+    # group: root
+    user::rw-
+    user:yura:rwx - вот появились права для yura
+    group::r--
+    mask::rwx
+    other::r--
+
+setfacl -m g:children:r myfile.odt - назначает группе children права на чтение. 
+setfacl -m m:rx myfile.odt - устанавливает фактические максимальные права на чтение и выполнение.
+setfacl -m o: myfile.odt - убирает все права (отсутствие прав)
+
+setfacl -b file1 - удалить все доп права ACL
+
+
 
 find / -type f -perm -4000 2>/dev/null | less - найти все файлы с SUID 
 find / -type f -perm -2000 2>/dev/null | less - тоже но с SGID
@@ -1205,9 +1246,10 @@ chown user /path/to/file - изменить владельца файла
 chown user:group /path/to/file - изменить и польз и группу
 chown user.group /path/to/file
 
-chown :group /path/to/file - изменить только группу
+chown :group /path/to/file - изменить только группу, если вы владелец файла или рут
 chown .group /path/to/file
 
+chown -R user2 dir - сменить владельца во всех файлах в директории и во всех поддиректориях (-R)
 
 разрешение -x для директории разрешает пользователю команду cd, если у каталога нет разрешения -x, 
 то в папку не войти, нельзя посмотреть что внутри, и нельзя производить никакие действия с фыайлами внутри. Если попытаться открыть файл текстовым редвктором, то он откроется но ничего не покажет.
