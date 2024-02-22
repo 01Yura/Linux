@@ -1,10 +1,11 @@
             Первоначальная установка и настройка AD
 После установки нужно:
-- в настройках сети (в трее network ans sharing center - ethernet0 - properties) поставить ip адрес , маску и DNS замкнуть на себя (127.0.0.1)
+- в настройках сети (в трее network ans sharing center - ethernet0 - properties) поставить статический ip адрес (а не полученный от роутепа по DHCP) , маску и DNS замкнуть на себя (127.0.0.1)
 - изменить имя компа (RMB my comp - properties)
 - установить AD domain services
 - В окошке после установки нажать Promote this server to a domain controller, создать новый лес (office.loc), далее далее и перезагрузка
 - tools - DNS - создать запись для Reverse lookup zones
+
 
                 Подключение рабочей станции к домену 
 - настроить ip адрес на рабочих станциях, без шлюза,  с DNS - наш контроллер домена
@@ -14,6 +15,7 @@
 
 На сервере
 - проверить присоединены ли компы к домену (tools - AD users and computers - computers)
+
 
                         Создание пользователей
 Tools - AD Users and Accounts - выбрать свой домен - users - New -user
@@ -26,9 +28,19 @@ RMB - edit
 Computer conf - Policies - Windows settings - Security settings - Account policies - Password Policy
 После изменений нужно обновить групповую политику командой gpupdate, или перегрузить сервер
 
+                            Принтеры
+После установки принтера надо зати в Панель управления - принтеры - выбрат свой принтер и нажать Свойстава принтера (не просто Свойства)
+Во вкладке Sharing надо расшарить этот принтер и включить его в AD
+Во вкладке Security разрешть все всем, чтобы в случае проблем с принтером любой пользователь мог отменить печать или подобное
 
+Данный принтер появится во вкладке сеть у всех пользователей домена
+Или на компе пользователя зайти в control panel - принтеры - добавить принтер - 
 
-
+                            DHCP-сервер
+Manage - add roles and feature - DHCP server - в конце установки появляется - настроить (далее.далее) 
+После установки: Tools - DHCP - IPV4 (new scope)
+После смены ip надо проверить на сервере в tools -dhcp какие адреса lease
+И проверить в DNS обратную запись, если не обновилась, тогда открыть прямую запись и поставить галочку Update PTR record 
 
 
 
@@ -42,6 +54,11 @@ Computer conf - Policies - Windows settings - Security settings - Account polici
     sysdm.cpl - сменить размер файла подкачки 
     gpedit.msc - локальные политики
     Мой компьютер - ПКМ Управление - пользователи (тут можно создать или удалить пользователя)
+    ncpa.cpl - открыть сетевое окружение
+    ipconfig - посмотреть свой ip
+    ipconfig /release - освободить свой ip
+    ipconfig /renew - запросить ipconfig
+    ipconfig /flushdns - сбрость кэш DNS
 
     Полезное:
 
