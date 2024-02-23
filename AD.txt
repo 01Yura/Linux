@@ -27,6 +27,7 @@ Tools - Group policy management - Domains - office.loc - Default Domain Poicies 
 RMB - edit 
 Computer conf - Policies - Windows settings - Security settings - Account policies - Password Policy
 После изменений нужно обновить групповую политику командой gpupdate, или перегрузить сервер
+Остановить обновления -диспетчер задач - службы - открыть службы - Windows Update (остановить и отключить)
 
                             Принтеры
 После установки принтера надо зати в Панель управления - принтеры - выбрат свой принтер и нажать Свойстава принтера (не просто Свойства)
@@ -41,6 +42,21 @@ Manage - add roles and feature - DHCP server - в конце установки 
 После установки: Tools - DHCP - IPV4 (new scope)
 После смены ip надо проверить на сервере в tools -dhcp какие адреса lease
 И проверить в DNS обратную запись, если не обновилась, тогда открыть прямую запись и поставить галочку Update PTR record 
+
+
+                            ЧТобы раздать интернет
+Нужна вторая сетевая карта
+Нужно установить службу Manage - add roles - Remote Access (это NAT и тд)
+И далее выбрать Routing
+Далее Tools - Routing and remote Access - выбрать свой сервер и  настроить
+
+                            Групповая политика
+Tools - Group policy managment - Default Domain Policy - Settings - ПКМ edit - User config - Preferences - Windows settings - Shortcuts
+
+ВАЖНО:
+- после настройки AD или до настройки нужно лишить дефолтного юзера на рабочих станциях админских прав но !!! сначала переименовать и включить дефолтную запись  админа, чтоюы можно было зайти на машину, если не работает контроллер домена
+
+                            Группы (локальная, глобальная, универсальная)
 
 
 
