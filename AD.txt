@@ -177,3 +177,24 @@ User configuration - Preferences - Windows settings - REgistry - ПКМ - new - 
 Далее надо применить эту политику к домену
 ПКМ на домене - Link an Existing GPO и выбрать нашу созданную политику
 
+Так как если нажаьб ПКМ на новую политику и перейти на вкладку settings, то будет задействована только User Configuration, а Computer configuration - стоит No settings define, поэтому ее можно и нужно отключить, чтобы при применении данной политики комп не нагржался лишний раз
+
+
+        Моделирование и результирующий набор политик
+
+Моделирование
+GPM - group policy modeling
+Выбираем пользователя к которому будут применятся политики и на каком компе это будет - и таким образом она показывает какие политики будут применятся к этому пользователю на этом компе
+
+Результирующя политика (Group policy resalts)
+Показывает какие политики уже применены
+Для того чтобы данная хрень работала надо добавить WMI (windows managment instrumentation) в исключения брандмауэра на той машине, на которой будем смотреть эту результирующую политику:
+Панель управления - брандмауэр - вверху пункт Разрешить...
+
+                Настройки брандмауэра
+
+GPO - свой домен - create gpo and link
+Edit - computer - policies - admin templates - network - network connections - firewall - domain profile - но тут мало пурктов настройки и они стандартные
+
+... - policies - windows settings - secyrity settings - windows firewall with advance security - ПКМ - create rule
+Выбрать пункт predifined
