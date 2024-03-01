@@ -196,5 +196,5 @@ GPM - group policy modeling
 GPO - свой домен - create gpo and link
 Edit - computer - policies - admin templates - network - network connections - firewall - domain profile - но тут мало пурктов настройки и они стандартные
 
-... - policies - windows settings - secyrity settings - windows firewall with advance security - ПКМ - create rule
-Выбрать пункт predifined
+... - policies - windows settings - secyrity settings - windows firewall with advance security - Inbound - ПКМ - create rule - 
+Выбрать пункт predifined и там уже WMI (это для показа результирующей политики )
