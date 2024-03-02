@@ -213,4 +213,42 @@ Edit - computer - policies - admin templates - network - network connections - f
 Создаем там папку Обмен
 Создаем ярлык для программы (2гис), но путь до исполняемого файла должен быть сетевой и папка с установленной программой расшарена для чтения для Everyone!
 Создаем политику и создаем папку на диске c (путь обычный)
-Создаем ярлыки в этой папке, которые ссылаются на сетевой путь 
+Создаем ярлыки в этой папке, которые ссылаются на сетевой путь
+
+            Скрипты
+
+Создвем политику - comp config - policies - windows settings - scripts - show files - тут должны лежать фалы скриптов - выбрать нужный скрипт нажав add
+
+            Удаленный рабочий стол
+
+Создаем политику компа - policies - adm templtes - win components - RDP services - RDP session host - connections
+Тут вкл параметр Aloow user to connect remoutly using RDP
+- security
+ТУт Allow user autentication .... (disable)
+
+Далее открыть порт в брандмауэре
+Тоже политика компа - policies - adm templates - network - net connections - win firewall - domain profile 
+Тут вкл Allow inbound RDP exceptions
+Слева можно указать с каких ip разрешено подключение. * - с любых
+
+Далее откоючаем спящий режим
+Тоже политика компа - policies - adm templates - system - power management - sleep settings
+Тут вкл specify the system sleep timeout (plugged in) - 0
+И specify the unattended sleep timeout (plugged in) - 0
+
+        УДАЛЕННЫЙ ПОМОЩНИК (нет на сервере!)
+
+Выполнить: msra - удаленный помощник
+Тот кому надо помощь создает файл приглашения и помещает ее в общую папку или отправить по интернету + сообщает код доступа
+ТО кто помогает открвает приглашение, вводит код и может видеть рабочий стол, чтоюы управлять надо отправить еще один запрос
+
+Пользоваться данной штукой можно без создания файла приглашения, но только по локальной сети!
+GPO - COmputer - policies - adm templates - system - remote assistance
+COnfigure solicited remote assistance
+COnfigure offer remote assistance - enable и указать кто может (office\Administrator)
+
+Теперь с рабочей станции (не с сервера) можно нажать RUN и msra /offerra
+Можно скопировать данную команду и создать ярлык
+Прога  BGinfo для отображения инфы о компе на рабочем столе 
+
+
