@@ -1,4 +1,6 @@
-
+Cброс пароля https://lifehacker.ru/sbros-parolya-windows-10/
+Если лок аккаунт заблочен https://www.youtube.com/watch?v=YR4nPiFRl18
+                
                 ОДНОРАНГОВАЯ СЕТЬ
 
 
@@ -247,7 +249,7 @@ GPO - COmputer - policies - adm templates - system - remote assistance
 COnfigure solicited remote assistance
 COnfigure offer remote assistance - enable и указать кто может (office\Administrator)
 
-Теперь с рабочей станции (не с сервера) можно нажать RUN и msra /offerra
+Теперь с рабочей станции (не с сервера) можно нажать RUN и msra /offerra (с того пользователя который разрешен в политиках)
 Можно скопировать данную команду и создать ярлык
 Прога  BGinfo для отображения инфы о компе на рабочем столе 
 
