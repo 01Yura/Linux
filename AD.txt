@@ -255,3 +255,5 @@ COnfigure offer remote assistance - enable и указать кто может (
 Прога  BGinfo для отображения инфы о компе на рабочем столе 
 
 
+
+
