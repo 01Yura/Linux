@@ -316,3 +316,18 @@ HKEY_LOCAL_MACHINE - SOFTWARE - Microsoft - Windows - Current version - Uninstal
 
         Подключение сетевого диска
 
+GPM - Users - policies - win settings - drive maps - создать - действие: создать (вставить сетевой путь до папки, названиеб букву)
+
+                                        РЕЗЕРВНОЕ КОПИРОВАНИЕ
+
+RAID - апаратный 
+В биосе выбрать пункт  RAID, перегрузиться, CTRL+i, выбрать диски , какой рейд использовать (зеркалирование RAID-1), какое название этого рейда. Диски форматируются.
+В системе, после перезагрузки, его надо инициализировать.
+
+RAID - программный
+Встроенными средствами Виндовс 
+diskmgmt.msc
+
+
+Manage - add roles and features - features - windows server backup
+Local backup - schedule
