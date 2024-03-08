@@ -8,6 +8,8 @@ qemu-img convert -f vmdk -O qcow2 файл_с_vmware.vmdk hda.qcow2
 После этого по идее надо сделать fixpermission
 /opt/unetlab/wrappers/unl_wrapper -a fixpermissions
 
+Образ с ключами: 
+https://downloaddevtools.com/en/product/18/free-download-vmware-vsphere
 
 ESXi хосты - реальные сервера на которые устанавливается ESXi (bare-metal virtualization)
 
@@ -50,4 +52,8 @@ Private - изолированная сеть для самих машин
     vCenter Server 8 Standard
 
     0F41K-0MJ4H-M88U1-0C3N0-0A214
+
+Решение проблемы No healthy upstream vCenter
+скачать ssh клмент, подключится и ввести команду, выбрать 8 и сделать новые сертификаты
+    https://kb.vmware.com/s/article/2112283
 
