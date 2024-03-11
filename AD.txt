@@ -328,6 +328,14 @@ RAID - программный
 Встроенными средствами Виндовс 
 diskmgmt.msc
 
-
 Manage - add roles and features - features - windows server backup
 Local backup - schedule
+
+Изменить созданное расписание резервного копирования
+Control panel -  administrative tools- Task scheduler
+Тут можно изменить и выставить определенные дни 
+
+Чтобы уоставлять нужное число копий, а лишние удалять, то в той же папке создаем новую задачу
+Выполнять от пользователя System с галочкой высший приоритет
+Из вкладки action задания на создания бэкапа копируем путь к команде и вставляем в новую задачу, но аргумент указаем лругой: 
+delete backup -keepversions:2 -quiet
