@@ -1,0 +1,4 @@
+https://portal.azure.com - домашняя страница 
+
+Subscription
+- create budget (часто не создать ло 48 часов, если аккаунт новый, кроме того не нужно создавать бюджет для free accounts)

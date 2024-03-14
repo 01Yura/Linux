@@ -106,3 +106,14 @@ vmnic0 - это первый из 4х адаптеров нашего вирту
 
 В пункт Datastores надо добавить самостоятельно
 
+Если надо расширить диск, то сначала расширяем, затем расширяем том в виндовс, затем в Server Manager на вкладке SCSI - extend,
+затем на хостах ESXI во вклдке Storage - properties - increase
+
+        Jбщая NFS шара
+
+Нужно установить роль - Server for NFS
+Далее в service manager отурываем File and storage services - shares - new share - NFS share quick
+
+Обзываем шару, указываем место, без аутентиикации и права на чтение\запись
+
+Далее в vCenter ПКМ на ESXi машине - Storage - new Datastorage - NFS

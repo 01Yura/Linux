@@ -361,3 +361,17 @@ Settings (указать макс размер, и расписание)
                 Создание Бэкапа системного диска для рабочей станции
 
 Пнель управления - Backup and restore win7 
+
+                Core version
+
+sconfig - команда для первоначальной настройки core сервера
+работает комбинация CAD
+shutdown /s - выключить сервер
+powershall - запутить powershall (слева появятся буквы PS)
+start powershall 
+
+hostname
+ipconfig
+cls - clear screen 
+get-netadapter - инфа о адаптере
+
