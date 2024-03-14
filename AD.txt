@@ -364,14 +364,25 @@ Settings (указать макс размер, и расписание)
 
                 Core version
 
+PowerShell
+
 sconfig - команда для первоначальной настройки core сервера
 работает комбинация CAD
-shutdown /s - выключить сервер
+shutdown /s - выключить сервер /r - перегрузить
 powershall - запутить powershall (слева появятся буквы PS)
-start powershall 
+start powershall
+stop-computer
+restart-computer
+
 
 hostname
 ipconfig
 cls - clear screen 
 get-netadapter - инфа о адаптере
+get-command -module команда - инфа о камандлетах и др обьетах 
+get-command *команда*
+get-command *set - какие начинаются с сет
+get-command -noun net* - показывает только правую часть команды
 
+Get-NetFirewallProfile - инфа о сотоянии каждого профиля файервола
+Set-NetFirewallProfile -Profile domain -Enabled false - откобчить файервол на профиле доменном
