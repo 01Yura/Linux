@@ -4,7 +4,7 @@ Cброс пароля https://lifehacker.ru/sbros-parolya-windows-10/
                 
                 ОДНОРАНГОВАЯ СЕТЬ
 
-
+    mstsc - RDP
     lusrmgr.msc - сменить имя локального пользователя на текущей машине
     sysdm.cpl - сменить размер файла подкачки 
     gpedit.msc - локальные политики (в system32)
@@ -386,3 +386,11 @@ get-command -noun net* - показывает только правую част
 
 Get-NetFirewallProfile - инфа о сотоянии каждого профиля файервола
 Set-NetFirewallProfile -Profile domain -Enabled false - откобчить файервол на профиле доменном
+
+        Integrated scripting environment
+
+Enter-PSSession -ComputerName core_server - подключится к серверу 
+Сперва подключаемся, потом можно отправлять другие команды скрипта
+
+invoke-command -computername core_server команда - отправить одну команду на удаленный сервер
+
