@@ -146,9 +146,30 @@ VMkernel Network Adapter - New standart switches - выбираем физиче
 
 Для опции netttwork failover detection с опцией beacon probing надо использовать 3 адаптера для корректной работы
 
+                        КЛАСТЕРЫ
+
                 DRS (disributes resourse scheduler)
 Сначала создаем кластер и добавяем в него все хосты
 3 режима:
 - ручной (спрашивет)
 - полуавтомат (сама распределяет на момент включения вм)
-- автомат
+- автомат (мигрирует машины в течение работы туда сюда, в зависимости от текущей загрузки хоста ESXi)
+
+                Affinity Rules (в настройках DRS)
+
+Создать правило, чтобы например vm1 и vm2 находились всегда на одном хосте, или разных
+- togethe
+- apart 
+- only to specific ESXi host
+- away from specific ESXi host
+
+                High avaliability
+
+Нужен кластер и общее хранилище
+И установленные VmWare tools
+Мониторит все это master host посредством heartbits пакетов в сетях MGMT и DATASTORE
+Если не может достучаться до VM или хоста, то создает данный машины на другом ESXi хосте
+Желательно чтобы на managment интерфейсе было 2 сетевые карты (nic teaming)
+
+Перед переводом хоста в maintance mode нужно в настройках HA отключить monitoring
+
