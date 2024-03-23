@@ -394,3 +394,8 @@ Enter-PSSession -ComputerName core_server - подключится к серве
 
 invoke-command -computername core_server команда - отправить одну команду на удаленный сервер
 
+                Desired State Configuration (DSC)
+
+Drift - изменение конфигурации оборудования со временем
+MOV - файл PS для конфигурации 
+

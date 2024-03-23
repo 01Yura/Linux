@@ -173,3 +173,8 @@ VMkernel Network Adapter - New standart switches - выбираем физиче
 
 Перед переводом хоста в maintance mode нужно в настройках HA отключить monitoring
 
+                Shell
+С основного желтого экрана
+alt+F1 - зайти ы шелл
+alt+F2 - выйти
+Через SSH можно зайти в тот же самый шелл
