@@ -1,0 +1,27 @@
+router> - user EXEC exec mode (router - its devise name) (in this mode you cant do any changes to config)
+
+enable
+router# - privileged EXEC mode (PEM)
+
+? - to view available commands
+
+configure terminal - global configuration mode (GCM)
+router(config)
+enable password CCNA - to protect priv EXEC mode with a password CCNA
+Если заданы обе команды и enable password и enable secret, то password будет игнорироваться
+
+running config - active config
+startup config - конфиг при загрузке
+show running-config - показать текущую конфигурация (PEM)
+show startup-config
+
+write / write memory / copy running-config startup-config - сохранить конфиг
+
+service password-encryption
+
+enable secret Cisco - второй метод это использование секрета
+Если заданы обе команды и enable password и enable secret, то password будет игнорироваться
+
+router(config)# do show run - частица do позвляет выполнить команду PEM в режиме GCM 
+
+no команда - отмена команды
