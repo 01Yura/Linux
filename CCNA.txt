@@ -25,3 +25,4 @@ enable secret Cisco - второй метод это использование 
 router(config)# do show run - частица do позвляет выполнить команду PEM в режиме GCM 
 
 no команда - отмена команды
+
