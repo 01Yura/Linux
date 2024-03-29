@@ -12,6 +12,10 @@ qemu-img convert -f vmdk -O qcow2 файл_с_vmware.vmdk hda.qcow2
 https://downloaddevtools.com/en/product/18/free-download-vmware-vsphere
 
 
+                GNS 3
+
+https://github.com/hegdepavankumar/Cisco-Images-for-GNS3-and-EVE-NG - образы cisco для GNS3
+
         Проблемы с nested virtualization workstation product
 Если у вас проблемы с вложенной виртуализацией на VMWare и появляется сообщение об ошибке "VMware Workstation does not support nested virtualization on this host. Module 'HV' power on failed"
  
@@ -173,8 +177,6 @@ VMkernel Network Adapter - New standart switches - выбираем физиче
 
 Перед переводом хоста в maintance mode нужно в настройках HA отключить monitoring
 
-                Shell
-С основного желтого экрана
-alt+F1 - зайти ы шелл
-alt+F2 - выйти
-Через SSH можно зайти в тот же самый шелл
+                iSCSI multipath
+
+Смотреть видео, так как он создает еще один свич и соответственно vmk, хотя сеть та же.
