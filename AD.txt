@@ -362,6 +362,8 @@ Settings (указать макс размер, и расписание)
 
 Пнель управления - Backup and restore win7 
 
+
+
                 Core version
 
 PowerShell

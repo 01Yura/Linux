@@ -119,15 +119,67 @@ name ИМЯ_ВИЛАНА
 
 НА СВИЧЕ:
 int g0/0
-switchport trunk encapsulation dot1q
+switchport trunk encapsulation dot1q - данную команду надо ввожить на свичах поддерживающих устаревший ISL (проприетарный протокол), такм образом мы говорим в каком режиме рабоать транку
 switchport mode trunk
-show interfaces trunk
+show interfaces trunk - посмотреть инфу о транке
+Кадры, которым разрешено ходить через интерфейс указан в том числе в графе 
+Vlans allowed and active in management domain
 
-switchport trunk allowed vlan ?
-switchport trunk native vlan номер_влана - надо менять с дефолтного для безопасности ???
+switchport trunk allowed vlan ? - указываем кадры каких вланов будут ходить через этот интерфейс
+Если на другой стороне кабеля есть влан с которым мы будем напрямую (без роутера) связываться (то есть у нас такой же вилан), то надо указать на нашей стороне интерфейса это влан, чтобы кадр придя от нас с нашим номером влана смог пройти через этот интерфейс
+
+switchport trunk native vlan номер_влана - надо менять с дефолтного для безопасности ??? (1001)
 
 НА РОУТЕРЕ:
+включить основной интерфейс g0/0
 interface g0/0.10
-encapsulation dot1q 10
+encapsulation dot1q 10(номер влана) - привязываем сабинтерфейс к влану
 ip address адрес маска
 sh ip int br 
+
+Настройка Native vlan на роутере: (необязательно)
+На всех транк интерфейсах свичей native vlan должен быть одинаковый (switchport trunk native vlan 10)
+
+1) При настройки сабинтерфейса пометить 10 влан как нейтив
+   int g0/0.10
+   encapsulation dot1q 10 native
+   ip add адрес маска
+
+2) Удалить сабинтерФЕЙС ЕСЛИ ОН БЫЛ и выплнить команду
+   int g0/0
+   ip address адрес маска
+
+
+Multilayer switch
+
+НА РОУТЕРЕ:
+- удалить все виртуальные интерфейсы 
+no interface g0/0.10 и тогда
+- default interface g0/0 - восстановить настройки по умолчанию
+- sh ip int br (удаленные сабинтерфейсы остануться в выводе пока мы не перезагрузим роутер)
+int g0/0
+ip add 192.168.1.194 255.255.255.252 (маска 32) - 
+
+НА СВИЧЕ:
+default int g0/1
+ip routing - включаем роутинг на свиче
+no switchport - меняет принцип работы порта с 2 уровня на 3й
+ip add 192.168.1.193 255.255.255.252
+sh ip int br
+
+ip route 0.0.0.0 0.0.0.0 192.168.1.194
+sh ip route
+sh int status (в колонке влан порт будет routed)
+
+int vlan10 - создаем вирт интерфейс (SVI) для каждого из виланов
+ip address 192.168.1.62 255.255.255.192
+no shutdown
+
+                DTP (dynamic tunking protocol)
+
+show interfaces g0/0 switchport - показывет в каком режиме настроен порт
+switchport nonegotiate - порт перестает отправляь DTP кадры
+Перевод порта в access mode выключает DTP, но перевод портв в trunk mode - нет. 
+По умолчанию транки на cisco имеют режим:
+switchport trunk encapsulation negotiate \
+поэтому прежде чем сключить режим транк на порту, надо принудительно указать режим работы dot1q, иначе включится режим ISL, так как он в цисках имеет приоритетный выбор
