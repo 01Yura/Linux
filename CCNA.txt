@@ -219,3 +219,4 @@ vtp mode server/client/transparent
 vtp version 2 - сменить режим VTP (VTP 2 поддерживает token ring  можно его не использовать)
 
 
+
