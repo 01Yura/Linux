@@ -249,6 +249,48 @@ Bridge ID состоит из 2х полей :
 3) Разблокируется (designated) порт у свича с наименьшим cost до root bridga, если cost одинаковый, то на свиче с наименьшим bridge ID
 Порт у оставшегося свича остается заблокированным (non-designated or blocking or alternate port)
 
+show spanning-tree - общая инфа по spanning-tree
+show spanning-tree detail - по каждому интерфейсу
+
+Cостояния интерфейсов:
+
+Blocking - не принимают и дропают сетевой трафик, но принимают BPDU. Не пересылают BPDU и NOT learn mac-addresses
+
+Listening - в этом состоянии находятся root and designated ports.
+15 cек, согласно forward delay
+Не принимают трафик, просто получают и пересылают BPDU
+
+Learning - состояние после Listening
+15 сек 
+Не принимают трафик, просто получают и пересылают BPDU
+Но в этом состоянии порт LEARN mac-addresses!
+
+Forwarding - работает нормально
+
+Spanning tree timers
+
+Hello - 2сек
+Forward delay - 15+15сек=30
+Max age - как долго свич ждет BPDU если он перестал их получать. После этого свич считает что сосед отвалился и перестраивается топология.
+
+Версии
+PVST - работает только с ISL инкапсуляцией
+PVST+ - работает с 802.1q
+
+Regular STP использует мак назанчения 0180.с200.0000
+PVST+ - 01:00:0c:cc:cc:cd
+
+STP Toolkit
+
+Portfast - включается на порту соединенному в хостом
+Позволяет портам немедленно перейти в режим forwarding, минуя Listening and Learning
+spanning-tree portfast - на
+spanning-tree portfast default - вклбючает портфаст на всех access портах
+
+BPDU Guard - включенный режим на порту похволяет автоматически отключить интерфейс, при получении BPDU кадра на этот порт
+spanning-tree bpduguard enable - надо выполнять в настройках интерфейса
+spanning-tree portfast bpduguard default - включает BPDU guard на всех интерфейсах, где включен portfast
+
 
 
 
