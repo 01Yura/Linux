@@ -282,15 +282,26 @@ PVST+ - 01:00:0c:cc:cc:cd
 
 STP Toolkit
 
-Portfast - включается на порту соединенному в хостом
+Portfast - включается на порту соединенному c хостом
 Позволяет портам немедленно перейти в режим forwarding, минуя Listening and Learning
-spanning-tree portfast - на
+spanning-tree portfast
 spanning-tree portfast default - вклбючает портфаст на всех access портах
 
 BPDU Guard - включенный режим на порту похволяет автоматически отключить интерфейс, при получении BPDU кадра на этот порт
 spanning-tree bpduguard enable - надо выполнять в настройках интерфейса
 spanning-tree portfast bpduguard default - включает BPDU guard на всех интерфейсах, где включен portfast
 
+Root Guard - если интерефейс получил BPDU с superior (lower bridge ID), то он отклоняется и свич остается root bridgем
+Интерфейс отключается
+
+Loop guard - даже если интерфейс перестал получать BPDU, то он остается выключенным
+
+spanning-tree mode mst/pvst/rapid-pvst
+
+spanning-tree vlan 1 root primary - установить свич рутом
+spanning-tree vlan 1 root secondary
+
+spanning-tree vlan1 cost/port-priority
 
 
 
