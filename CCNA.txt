@@ -252,7 +252,7 @@ Bridge ID состоит из 2х полей :
 show spanning-tree - общая инфа по spanning-tree
 show spanning-tree detail - по каждому интерфейсу
 
-Cостояния интерфейсов:
+        Cостояния интерфейсов:
 
 Blocking - не принимают и дропают сетевой трафик, но принимают BPDU. Не пересылают BPDU и NOT learn mac-addresses
 
@@ -267,7 +267,7 @@ Learning - состояние после Listening
 
 Forwarding - работает нормально
 
-Spanning tree timers
+        Spanning tree timers
 
 Hello - 2сек
 Forward delay - 15+15сек=30
@@ -280,7 +280,7 @@ PVST+ - работает с 802.1q
 Regular STP использует мак назанчения 0180.с200.0000
 PVST+ - 01:00:0c:cc:cc:cd
 
-STP Toolkit
+        STP Toolkit
 
 Portfast - включается на порту соединенному c хостом
 Позволяет портам немедленно перейти в режим forwarding, минуя Listening and Learning
@@ -303,5 +303,21 @@ spanning-tree vlan 1 root secondary
 
 spanning-tree vlan1 cost/port-priority
 
+        Виды STP
 
+Согласно IEEE                   Согласно Cisco
+
+1) STP (802.1D)                 PVST+
+оригинальный стп                с вланами
+без вланов
+
+2) RSTP (802.1W)                Rapid PVST+       
+быстрее
+без влвнов
+
+3) Multiple STP
+может обьединять вланы группами в инстансы
+
+Чтобы включить режим edge порт для порта соединенного с конечным хостом:
+spanning-tree portfast
 
