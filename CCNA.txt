@@ -252,7 +252,7 @@ Bridge ID состоит из 2х полей :
 show spanning-tree - общая инфа по spanning-tree
 show spanning-tree detail - по каждому интерфейсу
 
-        Cостояния интерфейсов:
+Cостояния интерфейсов:
 
 Blocking - не принимают и дропают сетевой трафик, но принимают BPDU. Не пересылают BPDU и NOT learn mac-addresses
 
@@ -267,7 +267,7 @@ Learning - состояние после Listening
 
 Forwarding - работает нормально
 
-        Spanning tree timers
+Spanning tree timers
 
 Hello - 2сек
 Forward delay - 15+15сек=30
@@ -303,5 +303,39 @@ spanning-tree vlan 1 root secondary
 
 spanning-tree vlan1 cost/port-priority
 
+                        Etherchannel Load-Balancing
+                        Агрегация каналов 
+
+Позволяет обьединить несколько физических интерфейсов в однин логичесикй, тес асмым повысим bandwith
 
 
+
+show etherchannel load-balance - посмотреть настройку (какой именно метод балансировки используется)
+например если указан src-mac, то это значит, что все кадры с одного мака будут использовать только один интерфейс
+port-channel load-balance ? - посмотреть варианты настройки etherchannel и назначить нужный 
+
+3 метода:
+1) PAgP (port aggregation protocol)
+Это проприетарный цисковскй протокол
+2) LACP (link aggregation control protocol) - IEEE 802.3ad
+3) Static EtherChannel - руками, протокол не используется
+Можно обьединть до 16 интерфейсов, при 8 активных одновременно
+
+Настройка:
+- выбрать диапазон портов
+- no switchport (!! только если будем делать layer 3 etherchannel)
+- channel-group 1 mode РЕЖИМ 
+        Режимы:
+        -auto или desireble для PAgP
+        -active или passive для LACP
+        -on - без использования протокола (вручную)
+- если сделали layer 3, то назначаем ip адрес на port-channel 1
+
+ команды:
+
+channel-protocol ? - но эта команда не особо нужна, так при выборе режима настройки etherchannel все равно будет использован тот или иной протокол. Но если сначала указать протокол, как в этом случае, а затем channel-group 1 mode РЕЖИМ (указать не верный режим), то эта последняя команда будет игнорирована. 
+
+Внимание! После настройки port-channel 1 транк нужно вешать на нее, а не на физический интерфейс
+
+show etherchannel summary 
+show etherchannel port-channel 
