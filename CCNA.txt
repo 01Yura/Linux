@@ -303,6 +303,24 @@ spanning-tree vlan 1 root secondary
 
 spanning-tree vlan1 cost/port-priority
 
+        Виды STP
+
+Согласно IEEE                   Согласно Cisco
+
+1) STP (802.1D)                 PVST+
+оригинальный стп                с вланами
+без вланов
+
+2) RSTP (802.1W)                Rapid PVST+       
+быстрее
+без влвнов
+
+3) Multiple STP
+может обьединять вланы группами в инстансы
+
+Чтобы включить режим edge порт для порта соединенного с конечным хостом:
+spanning-tree portfast
+
                         Etherchannel Load-Balancing
                         Агрегация каналов 
 
