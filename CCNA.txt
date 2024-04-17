@@ -590,5 +590,45 @@ ip mtu ЦИФРА
 2 тип) Network LSA - отсылаются только DRом и показывают список роутеров, которые в данной сети
 5 тип) AS External LSA - генерируются толко ARSBом 
 
+                FHRP (first hop redundancy protocol)
+
+1) HSRP (hot standby router protocol)
+2) VRRP (virtual router redundancy protocol)
+3) GLBP (gateway load balancing protocol)
+
+
+ Два роутера делят один га двоих virtul IP, и он настраивается в качестве defaul gateway на хостах. Они согласуют этот адрес путем рассылки multicast "Hello" друг другу
+ Когда комп хочет вы1ти в другую сеть, то он запрашивает мак у своего default gateway и ему отвечает ACTIVE ROUTER, отсылая свой virtual mac-address
+Если STANDBY ROUTER не получает Hello сообщений, он становится Active и отсылает gratuitous ARP reply броадкастом на ff-ff-ff-ff-ff-ff, чтобы изменить Arp-table на свичах
+Если R1 заработает снова, то он станет STANDBY ROUTER, но можно настроить чтобы он обратно становился ACTIVE ROUTER
+
+HSRP
+- cisco proprietary protocol
+- multicast "Hello" 224.0.0.102 (version 2, v2 использует 224.0.0.2)
+- virtual mac-address (v1 - 0000.0c07.acXX, v2 - 0000.0с9f.fxxx, где XX - это номер HSRP группы)
+Настраивается непосредственно на интерфейсе. 
+inn g0/0
+standby version 2 - переключить на 2 версию, необязательно
+standby 1 ip АДРЕС - указать группу (в идеале чтоб совпадала с VLAN) и IP
+standby 1 priority 200
+standby 1 preempt - после восстановления после поломки стать ACTIVE, даже если другой уже является ACTIVE 
+ACTIVE ROUTER определяется значением priority (default 100 )или ip адресом
+show standby - показать общий вывод  настройки HSRP
+
+
+VRRP
+- open standart
+- MASTER and BACKUP ROUTER
+- multicast 224.0.0.18
+- 0000.5e00.01XX
+
+GLBP
+- cisco proprietary
+- load balancing для хостов из одной подсети
+- выбирается AVG (active virtual gateway)
+- он выбирает до 4ч AVFs (active irtual forwarder), каждый изкоторых отвечает за сою порцию хостов в сети
+- 224.0.0.102
+- 0007.b400.XXYY, гду XX - группа и YY - AVF
+
 
 
