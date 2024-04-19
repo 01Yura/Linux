@@ -771,7 +771,7 @@ ipv6 address autoconfig - используется NDP, а именно RS and R
 show ipv6 route
 ipv6 unicast-routing - вклбчить ipv6 роутинг
 
-Назначать ipv6 адрес можно 3мя способами:
+Создать маршрут ipv6  можно 3мя способами:
 ipv6 address адрес/префикс {некст-хоп|интерфейс [некст-хоп]} [ad]
 
 - directly attached (данная команда не работает в ipv6 !!!)
@@ -785,5 +785,44 @@ ipv6 адрес/префикс g0/0 некст-хоп
 
 ipv6 route ::0 некст-хоп - маршрут по умолчанию
 
-Можно использовать link-local address как next hop, но тогда надо указывать fully specified route
+Можно использовать link-local address как next hop, но тогда надо указывать fully specified route (то еть интерфейс и link-local адрес этого интерфейса)
 ipv6 адрес/префикс g0/0 link-local address 
+
+Если добавить маршрут до одной сети через разные интерфейсы (один как основной, второй как бэкап), указав AD у второго больше (н-р 2), то второй маршрут не будет отображаться в таблице маршрутизации. Чтобы увидеть его надо посмотреть
+show run conf | include ipv6 
+
+                ACL (Standart access control lists)
+
+На один интерфейс можно повесить только по одной ACL для каждого направления. Если ACL уже были указаны, и вы создаете новую, то она заменить существующую
+Implicit deny - если трафик не соответствует ни одному условию в ACL, то роутер его дропнет
+        2 вида ACL:
+- Standart ACL (numbered and named) - основаны только на SOURCE IP
+номера 1-99 и 1300-1999
+access-list НОМЕР {deny|permit} IP wildcard mask
+
+access-list 1 deny 1.1.1.1 0.0.0.0 - заблокировать толькл данный хост
+access-list 1 deny 1.1.1.1 - можно и так для конкретного адреса
+access-list 1 deny host 1.1.1.1 - старый вариант, но тоже работает
+
+access-list 1 deny 192.168.1.0 0.0.0.255 - заблокировать сеть /24
+
+access-list 1 permit any - разрешить все остальное
+access-list 1 permit 0.0.0.0 255.255.255.255 - или так
+
+access-list 1 remark # ОПИСАНИЕ # - комментарий к аксесс листу, хэштег не обязателен (отображается только в конфиге, что неудобно)
+
+show access-lists
+show ip access-lists
+show run | include access-list
+show run | section access-list
+
+int g0/0
+ip access-group НОМЕР {in|out}
+
+ip access-list standart ИМЯ - настройка именованой ACL (с помощью данной команды мы попадаем в конфиг мод стандартной ACL)
+[НОМЕР не обязательно] {deny|permit} ip wildcard-mask
+
+
+
+
+- Extended ACL (numbered and named) - основаны на src/dst IP and ports
