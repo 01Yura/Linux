@@ -736,3 +736,54 @@ do show ipv6 int br
 ::/0 - edfault gateway
 
 ::1 - loopback 
+
+                RFC (request for comments)
+
+RFC 5952 - описывает как правильно записывать ipv6 адрес
+
+Solicted-node milticast address
+Надо взять FF02::1:FF и добавить сюда послежние 6 цифр unicast local адреса
+
+                NDP (neighbour discovery protocol)
+
+Замена ARP в IPv6
+Используются 2 типа сообщений:
+1) NS (neighbour solicitation) типо как arp request. ICMPv6 тип 136
+2) NA (neighbour advertisement) ICMPv6 type 136
+
+show ipv6 neighbour
+
+Еще одна функция NDP это нахождение роутера в локальной сети
+1) Router solicitation (RS) - ICMPv6 type 133 расылается на мультикаст адрес FF02::2 (all routers)
+2) Router Advertisement (RA) - ICMPv6 type 134 рассылается на мультикаст адрес FF02::1 (all nodes)
+
+                SLAAC (Stands for stateless address auto-configuration)
+
+ipv6 address autoconfig - используется NDP, а именно RS and RA для того, чтобы узнать префикс и автоматически генерируется ipv6 адрес (используя EUI-64 чтобы сгенерить interface ID)
+
+        DAD (duplicate address detection)
+
+Каждый раз когда интерфейс вклбчается или назначается ipv6 адрес происходит проверка на дубликаты используя проокол NDP, а имеенно сообщени NS и NA
+Роутер отсылает NS сообщение на свой собственный Solicited node multicast address и если он не получает ответ, то значит адрес - уникальный
+
+                IPv6 Static Routing
+
+show ipv6 route
+ipv6 unicast-routing - вклбчить ipv6 роутинг
+
+Назначать ipv6 адрес можно 3мя способами:
+ipv6 address адрес/префикс {некст-хоп|интерфейс [некст-хоп]} [ad]
+
+- directly attached (данная команда не работает в ipv6 !!!)
+ipv6 адрес/префикс g0/0
+
+- reursive attached (роутеру приходится чекать таблицу 2 раза)
+ipv6 адрес/префикс некст-хоп (а чтобы интерфейс который сморит на сеть где живет некст-хоп, надо чекнуть таблицу еще раз)
+
+- fully specified
+ipv6 адрес/префикс g0/0 некст-хоп
+
+ipv6 route ::0 некст-хоп - маршрут по умолчанию
+
+Можно использовать link-local address как next hop, но тогда надо указывать fully specified route
+ipv6 адрес/префикс g0/0 link-local address 
