@@ -888,9 +888,45 @@ show lldp neighbours
 show lldp neighbours detail
 show lldp entry SW1
 
+                                NTP (network time protocol)
 
+show clock
+show clock detail - показать источник времени
+clock set 14:30:00 27 Dec 2023 - нпстроить software clock (надо настраивать в формате UTC)
+calendar set 14:30:00 27 Dec 2023 - настроить hardware clock
+clock update-calendar - чтобы настроить hardware clock по системным часам
+clock read-calendar - системные по хардварным
 
+clock timezone JST 9 - установить часовой появляется
+clock summer-time EDT reccuring 2 Sunday March 02:00 1 Sunday November 02:00
 
+        NTP
 
+Порт udp 123
+Stratum 15 - это максимальный слой удаленнойсти от reference clock и все что авше считпется ненадежным
 
+Циско девайсы могут работать в 3х режимах:
+- server
+- clientS
+- symmetric active mode
 
+Сервера Stratum 1 называются primary servers
+Остальные сервера - secondary
+
+ntp server IP_АДРЕС - лучше указать несколько (после чего software clock (UTC) синхронизируются с данным сервером)
+ntp server IP_АДРЕС prefer - сделать предпочтительным один из нескольких, если указал несколько
+show ntp associations 
+show ntp status 
+
+Чтобы сделать роутер NTP скрвером нужно создать loopback интерфейс и назначить его ичтоиком
+ntp source loopback 0
+
+ntp master [номер стратума]- сделать роутер сервером NTP, даже если он не связан c другим сервером NTP от которого он получает время
+
+ntp peer IP_АДРЕС
+ntp peer IP_АДРЕС
+
+ntp authenticate - включить аутентификацию
+ntp authentication-key НОМЕР_КЛЮЧА md5 КЛЮЧ 
+ntp trusted-key НОМЕР_КЛЮЧА
+ntp server IP_АДРЕС key НОМЕР_КЛЮЧА - на самом сераере эту команду вводить не надо, только на клиенте
