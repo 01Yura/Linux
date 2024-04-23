@@ -941,13 +941,13 @@ dns query ---> dns response
 
 ipconfig /displaydns - показать днс кеш виндовс
 ipconfig /flushdns - очистить локальный DNS кеш компа виндовс
-windowssystem32/drivers/etc/hosts - локальный файл для днс записей (использовался раньше до создания DNS)
+windows/system32/drivers/etc/hosts - локальный файл для днс записей (использовался раньше до создания DNS)
 
         Настройка DNS сервера на роутере
 
 ip dns server - включить днс сервер на роутере
 ip host R1 192.168.1.1
-ip host PC1 192.168.1.10 и т.д.
+ip host PC1 192.168.1.10 и т.д. - назначаем статические имена днс
 ip name-server 8.8.8.8 - настрить внешний DNS сервер для свмого роутера на котором стоит внутренний DNS сервер
 ip domain lookup - обязветльно надо включть, чтобы сам роутер мог cовершать запросы на внешний DNS сервер
 (иногда эта команда вкл по дефолту)
@@ -961,3 +961,17 @@ ip domain lookup
 
 
 ip domain name ИМЯ - назначить доменное имя
+
+
+                                DHCP (dynamic host configuration protocol)
+
+ipconfig /release - освободить ip адрес на винде
+ipconfig /renew - 
+
+DHCP серверы используют UDP 67
+DHCP клиенты - UDP 68
+
+        DORA
+1) DHCP discover - это броадкаст сообщение "Есть ли в сети DHCP сервер? Мне надо ip адрес"
+2) DHCP offer  - ответ от сервера "Как насчет этого ip адреса?"
+3) 
