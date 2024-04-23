@@ -930,3 +930,34 @@ ntp authenticate - включить аутентификацию
 ntp authentication-key НОМЕР_КЛЮЧА md5 КЛЮЧ 
 ntp trusted-key НОМЕР_КЛЮЧА
 ntp server IP_АДРЕС key НОМЕР_КЛЮЧА - на самом сераере эту команду вводить не надо, только на клиенте
+
+                        DNS (domain name system)
+
+Это служба используемая для резолвинга человекочитаемых имен в ip адреса.
+ipconfig /all - для windows чтобы увидеть все об интерефейсе
+nslookup YOUTUBE.COM - чтобы узнать ip адрес по имени
+dns query ---> dns response
+В основном это UDP 53 port
+
+ipconfig /displaydns - показать днс кеш виндовс
+ipconfig /flushdns - очистить локальный DNS кеш компа виндовс
+windowssystem32/drivers/etc/hosts - локальный файл для днс записей (использовался раньше до создания DNS)
+
+        Настройка DNS сервера на роутере
+
+ip dns server - включить днс сервер на роутере
+ip host R1 192.168.1.1
+ip host PC1 192.168.1.10 и т.д.
+ip name-server 8.8.8.8 - настрить внешний DNS сервер для свмого роутера на котором стоит внутренний DNS сервер
+ip domain lookup - обязветльно надо включть, чтобы сам роутер мог cовершать запросы на внешний DNS сервер
+(иногда эта команда вкл по дефолту)
+
+show hosts - посмотреть записи DNS кеша на роутере
+
+        Настройка роутера как DNS клиента
+
+ip name-server 8.8.8.8
+ip domain lookup
+
+
+ip domain name ИМЯ - назначить доменное имя
