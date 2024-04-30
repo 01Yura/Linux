@@ -1435,4 +1435,43 @@ Digital sertifications - если организации нкжен сертиф
 
                                         Port Security
                                 
+Настраивается на интерфейсе и разрешает только определенные MAC адреса на порту свича (один - по дефолту, или более при настройке)
+        Если чужой мак адрес подключится к интерфейсу, то могут быть разные варианты violation:
+Дефолтное поведение интерфейса это - shutdown - интерефейс автоматически переводится в состояние err-disabled и отключается до того, пока админ не включит его вручную
+Можно устанавливать лимит мак адресов, подключенных к порту
 
+int g0/1
+switchport mode access/trunk - порт секьюрити может быть применен только к аксесс портам или транка, не к тем кто dynamic auto или dynamic desirable
+switchport port-security - инфа о всех интерфейсах с включенным порт-секьюрити и некоторыми значениями
+show port-security interface g0/1
+
+show errdisable recovery - посмотреть все причины выключения интерфейсов (не обязательно связанные с порт-секьюрити). В таблице будут показаны причины и статус вкл/выкл ли включение интерфейса через некоторое время при возникновении данной причины
+errdisable recovery cause psecure-violation - включить включение интерыейса при возникновении errdisable в случае срабатывания port-security
+errdisable recovery interval 180 - вновь включаться интерфейс будет через 180сек
+
+- shutdown
+switchport port-security
+
+- restrict - свич дропает трафик от неавторизированного хоста, но сам интерфейс не отключается
+switchport port-security
+switchport port-security mac-address МАК_АДРЕС
+switchport port-security violation restrict
+
+- protect - свич так же дропает трафик, но интерфейс работает , однако так же не отсылает syslog и snmp сообщения и не увеличивает violation counter
+switchport port-security
+switchport port-security mac-address МАК_АДРЕС
+switchport port-security violation protect
+
+
+switchport port-security aging time МИНУТЫ - установить время хранения mac адресов на порту (действует только для динамисчески сохраненных свичем маков)
+switchport port-security aging type absolute/inactivity - абсолют значит, что по исетчении таймера мак адрес удалится в любом случае, инактивити - значит что если по истечении таймера хост продолжает отсылать кажры, то время хранения обновится
+switchport port-security aging static - установить время хранения mac адреса и для статически установленных руками маков, а не только для динамически записанных свичем
+
+        Sticky secure mac addresses
+
+switchport port-security mac-address sticky МАК_АДРЕС - эта команда будет добавлена в run conf и данный адрес никогда не истечет вне зависимости от общих настроек aging'а 
+write memory - не забыть сохранить конфиг 
+
+switchport port-security mac-address sticky - просто введя команду, она сохранит все динамически введенные маки в stiky, а если no.... , то наоборот 
+
+show mac address-table secure - посмотериь все секьюрные маки
