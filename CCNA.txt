@@ -1025,7 +1025,7 @@ DHCP клиенты - UDP 68
         DHCP server configuration
 ip dhcp excluded-address 192.168.1.1 192.168.1.10 - указать какой диапазон ip не будут назначаться (это не обязательная команда)
 ip dhcp pool LAB_POOL
-network 192.168.0.0 /24
+network 192.168.0.0 255.255.255.0
 dns-server 8.8.8.8 - какой днс будет использовать клиент
 domain-name company.local - указать доменное имя сети (в итоге будет например pc1.company.local)
 default-router 192.168.1.1
@@ -1442,11 +1442,11 @@ Digital sertifications - если организации нкжен сертиф
 
 int g0/1
 switchport mode access/trunk - порт секьюрити может быть применен только к аксесс портам или транка, не к тем кто dynamic auto или dynamic desirable
-switchport port-security - инфа о всех интерфейсах с включенным порт-секьюрити и некоторыми значениями
+switchport port-security
 show port-security interface g0/1
 
 show errdisable recovery - посмотреть все причины выключения интерфейсов (не обязательно связанные с порт-секьюрити). В таблице будут показаны причины и статус вкл/выкл ли включение интерфейса через некоторое время при возникновении данной причины
-errdisable recovery cause psecure-violation - включить включение интерыейса при возникновении errdisable в случае срабатывания port-security
+errdisable recovery cause psecure-violation - включить автомвтическое включение интерыейса при возникновении errdisable в случае срабатывания port-security
 errdisable recovery interval 180 - вновь включаться интерфейс будет через 180сек
 
 - shutdown
@@ -1475,3 +1475,40 @@ write memory - не забыть сохранить конфиг
 switchport port-security mac-address sticky - просто введя команду, она сохранит все динамически введенные маки в stiky, а если no.... , то наоборот 
 
 show mac address-table secure - посмотериь все секьюрные маки
+
+                                        DHCP Snooping
+
+Это фича которая позволяет фильтроф=вать DHCP сообщения полуенные с недоверенных портов
+
+Сообщения DHCP севера:
+- offer
+- ack 
+- nak - противоположность ack, чтобы отклонить запрос клиента
+
+Сообщения DHCP клмента:
+- discover
+- request
+- release
+- decline - чтобы отклонить ip адрес предложенный сервером
+
+Существует 2 вида портов, доверенные и недоверенные.
+Если любое DHCP сообщение получено с доверенного порта, то оно не проверяется и пропускается. Если с недоверенного, то:
+- если это сообщение от DHCP сервера, то оно отклоняется
+- если от клиента, то проверяется:
+        - если это DISCOVER or REQUEST, то проверяется соответствие поля мак-адрес источника и поля CHADDR в самом DHCP сообщении. И там и там маки должны совпадать. Это сделано чтобы не допустить пересылку злоумышленником запроса от клиента
+        - усли это RELEASE or DECLINE, то проверяется чтобы IP адрес источника этого сообщения и интерфейс соответствовали записи в таблице Snooping bindind table (show ip dhcp snooping binding).
+
+        Настройка DHCP Snooping
+ip dhcp snooping - просто вкл дхцп снупинг на свиче
+ip dhcp snooping vlan 1 - далее надо вклбчить его на каждом vlane
+no ip dhcp snooping information option - так как свич пересылающий dhcp сообщение от хоста пересылает его прикрепляет к нему "опцию 82" (это опция DHCP relay), то такое сообщение будет отброшено, так как по дефолту сообщения с этой опцией, при включенном DHCP спуфинге отбрасываются, поэтомы мы отключаем на свиче прикрепление этой опции к сообщению
+int g0/0
+ip dhcp snooping trust - делаем инт g0/0 доверенным (по дефолту все порты НЕдоверенные) так как он смотрит в сторону DHCP сервера
+show ip dhcp snooping binding - смотрим таблицу 
+
+        DHCP snooping rate limit
+Устаноывка лимита соббщение DHCP на интерфейсе
+int range f0/1 - 2
+ip dhcp snooping limit rate 1 - устанавливаем лимит сообщений в 1 шт в 1 сек, если больше то интерфейс переходит в состояние errdisabled и отключается например (в наст сети надо делать цифру больше)
+errdisable recovery cause dhcp-rate-limit - вкл errdisable recovery для dhcp-rate-limit
+show errdisable recovery - посмотреть когда включено errdisable recovery
