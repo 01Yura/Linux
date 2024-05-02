@@ -1512,3 +1512,38 @@ int range f0/1 - 2
 ip dhcp snooping limit rate 1 - устанавливаем лимит сообщений в 1 шт в 1 сек, если больше то интерфейс переходит в состояние errdisabled и отключается например (в наст сети надо делать цифру больше)
 errdisable recovery cause dhcp-rate-limit - вкл errdisable recovery для dhcp-rate-limit
 show errdisable recovery - посмотреть когда включено errdisable recovery
+
+                        Dynamic ARP inspection
+Gratuitous ARP - некоорые хосты отсылают ARP request, но им не требуется ответа, так как в ip адресе назначения указан его же адрес, а просто чтобы другие хосты узнали его мак и ip
+Так же как и при DHCP снупинге все порты по умолчанию считаются недоверенными, и надо настроить доверенные порты смотрящие вверх (аплинки)
+DAI проверяет мак адрес отправителя ARP запроса на untrusted порте и его ip адрес согдасно таблице DHCP snooping binding table и если все соответствует, то запрос проходит через интерфейс. То есть DAI полагается на DHCP snooping, но есть и другой метод: 
+- использование в ручную настроенных ARP ACLs в которых определенному маку соответствует определенный IP (это особенно нужно, если хост имеет статический ip и значит его IP нет в таблице DHCP snooping binding table)
+
+ip arp inspection vlan 1 - в отлчие от DHCP snooping нужна только одна команда для включения фичи
+int range g0/0 - 1
+ip arp inspection trust
+show ip arp inspection interfaces - инфа о довер/недовер портах и лимите в сек (15 по умолчанию)
+
+        DAI rate limiting
+int range g0/1 - 2 - выбрать недоверенные интерфейсы
+ip arp inspection limit rate 25 burst interval 2 - 25 пакетов за 2 секунды (по дефолту 15 пакетов за 1 сек) Сам burst interval можно не указывать, по умолчанию он равен 1 сек
+При срабатывании условия интерфейс входит в состояние errdisable и выклбючается
+Включить его можно:
+- shutdown and no shutdown
+- errdisable recovery cause arp-inspection
+show errdisable recovery
+
+ip arp inspection validate ? - ввести доп прверки на валидность ip адресов и соответсвие мак адресов в ethernet заголовке и внутри arp запроса/ответа
+dst-mac
+ip
+src-mac
+Если надо ввести все 3 проверки то надо писать их в одну строку, иначе последующаяя команда затрет предыдущую
+
+        ARP ACLs
+arp access-list ARP-ACL-1
+permit ip host 192.168.1.10 (статический ip) mac host МАК_АДРЕС
+ip arp inspection filter ARP-ACL-1 vlan 1 - привязываем это ACL к влану
+
+show ip arp inspection 
+
+
