@@ -648,11 +648,11 @@ HSRP
 - cisco proprietary protocol
 - multicast "Hello" 224.0.0.102 (version 2, v2 использует 224.0.0.2)
 - virtual mac-address (v1 - 0000.0c07.acXX, v2 - 0000.0с9f.fxxx, где XX - это номер HSRP группы)
-Настраивается непосредственно на интерфейсе. 
-inn g0/0
+Настраивается непосредственно на интерфейсе или vlane, если используются вланы 
+int g0/0
 standby version 2 - переключить на 2 версию, необязательно
 standby 1 ip АДРЕС - указать группу (в идеале чтоб совпадала с VLAN) и IP
-standby 1 priority 200
+standby 1 priority 200 - указать приоритет больше стандартного (100)
 standby 1 preempt - после восстановления после поломки стать ACTIVE, даже если другой уже является ACTIVE 
 ACTIVE ROUTER определяется значением priority (default 100 )или ip адресом
 show standby - показать общий вывод  настройки HSRP
@@ -1546,4 +1546,23 @@ ip arp inspection filter ARP-ACL-1 vlan 1 - привязываем это ACL к
 
 show ip arp inspection 
 
+                                        LAN design 
+
+        Two-tier LAN (collapsed core design)
+- access layer (QoS, port-security, DHCP snooping, DAI)
+- distribition layer (aggregation layer)
+
+        hree-tier LAN
+- access layer
+- distribition layer
+- core layer (это тоже свичи, но главная функция - быстрота передачи трафика, тут нет QoS, STP, security) Здесь все соединения - это L3
+
+После последнего уровня уже стоят роутеры
+
+        Spine-leaf architecture
+Используется в data centers
+- spine switches - каждый spine соединен с каждым leaf, но не между собой
+- leaf switches (access) - каждый leaf соединен с каждым spine, но не между собой
+
+        SOHO
 
