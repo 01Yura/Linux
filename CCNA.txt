@@ -364,7 +364,7 @@ spanning-tree vlan1 cost/port-priority
 spanning-tree portfast
 
                         Etherchannel Load-Balancing
-                        Агрегация каналов 
+                        Агрегация каналов (LAG - link aggregation group)
 
 Позволяет обьединить несколько физических интерфейсов в однин логичесикй, тес асмым повысим bandwith
 
@@ -393,10 +393,14 @@ port-channel load-balance ? - посмотреть варианты настро
 
  команды:
 
+int range f0/1 - 2
 channel-protocol ? - но эта команда не особо нужна, так при выборе режима настройки etherchannel все равно будет использован тот или иной протокол. Но если сначала указать протокол, как в этом случае, а затем 
 channel-group 1 mode РЕЖИМ (указать не верный режим), то эта последняя команда будет игнорирована. 
 
 Внимание! После настройки port-channel 1 транк нужно вешать на нее, а не на физический интерфейс
+int port-channel 1
+switchport mode trunk
+switchport trunl allowed vlan 10,20
 
 show etherchannel summary 
 show etherchannel port-channel 
@@ -1804,3 +1808,55 @@ GCMP - используется в WPA3, так же использует AES и
 
         Wireless configuration
 
+Если точки доступа и WLC соединены через свич, то есть это split-MAC architecture (lightweight) и значит транк должен быть только на интерфейсе соединения WLC и свича, но не в месте соединения AP со свичем
+
+1) Создаем вланы на свиче 
+vlan 10
+name Management
+vlan 100
+name Internal
+vlan 200
+name Guest
+
+2) Добавляем нужные порты в Management vlan
+int range f0/6 - 8 - эо интерефейсы подключения к 2м AP и компьютеру чтобы управлять CLI WLC
+switchport mode access
+switchport access vlan 10
+spanning-tree portfast
+
+3) Включаем etherchannel для соединения свича и WLC
+int range f0/1 - 2 - это интерфейсы сокдиненные с WLC
+channel-group 1 mode on - включаем etherchannel для этих портов, работает только в режиме static LAG
+
+4) Вешаем транк на него
+int port-channel 1 
+switchport mode trunk - транк вешаем на группу, а не на интерфейсы!
+switchport trunl allowed vlan 10,100,200
+
+5) Создаем SVI интерфейсы на свиче
+int vlan 10
+ip addr 192.168.1.1 255.255.255.0 
+int vlan 100
+ip addr 10.0.0.1 255.255.255.0 
+int vlan 200
+ip addr 10.1.0.1 255.255.255.0
+
+6) Создаем DHCP пул для каждого влана, чтобы точки дочступа могди получтьь ip адреса (vlan10) и клиенты могди получить IP адреса (vlan 100, 200)
+ip dhcp pool VLAN10
+network 192.168.1.0 255.255.255.0
+default-router 192.168.1.1
+option 43 ip 192.168.1.100 - данная опция надо, чтобы сказать точкам доступа IP адрес их WLC. В данном случае это не обязательно, так как все AP и WLC находятся в одной сети и AP может послать CAPWAP dyscovery massage и спросить есть ои в сети WLC
+
+ip dhcp pool VLAN100
+network 10.0.0.0 255.255.255.0
+default-router 10.0.0.1
+
+ip dhcp pool VLAN200
+network 10.1.0.0 255.255.255.0
+default-router 10.1.0.1
+
+7) Делаем свич NTP сервером
+ntp master 
+
+8) Настраиваем WLC
+Пройти по шагам для конфигурации
