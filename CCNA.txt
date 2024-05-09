@@ -1946,3 +1946,45 @@ Indentation (отступы) очень важны
 Начинается с ---
 - один дефис символизирует список
 key:value
+
+
+                                REST APIs
+
+В основном используются Northbound интерфейсом в SDN архитектуре
+CRUD (create, read, update, delete)
+
+REST APIs обычно используют HTTP методы, но не всегда и это не обязательно
+Create - POST
+Read - GET
+Update - PUT, PATCH
+Delete - DELETE
+
+Клгда HTTP клиент отсылает запрос HTTP серверу, то HTTP заголовок содержит следующую информацию:
+- HTTP verb (method) - GET
+- URI (Uniform resourse identifier)
+А так же другие HTTP заголовки
+Сервер отвесает клиенту отсылая RESPONSE на его REQUEST
+- код статуса
+1xx - informational ифнормационный ответ, типо запрос получен и оьбрабатывается (102 - processing)
+2хх - successul - запрос получен и понятен и принят (200 - OK, 201 - created в ответ на POST request)
+3хх - redirection (301 - moved permanently)
+4хх - client error - или ошибка в написании адреса, или ресурса не существует (403 - unauthorized нужна аутентификация от клиента, 404 - not found )
+5хх - server error - запрос получен и валиден, но сервер не может обработать по каким либо причсинам (500 - internal server error)
+
+        REST (representational state transfer)
+
+Так же изветен как REST-based APIs and RESTful APIs
+REST описывает правила работы APIs. Это фреймворк для APIs
+
+REST API использует клиент-скрверную архитектуру
+Клиент использует API calls (как HTTP requests) для доступа к ресурсам сервера
+Statelessness - згначит что каждый API вызов не зависим от других. Сервер не хранит инфу о предыдущих запросах, каждый запрос это новый  - event
+REST APIs должны поддерживать кеширование данных
+Но не все ресурсы должны кешироваться
+
+        Cisco DevNet
+
+Это программа разработки от Циско для помощи программистам в написании программ, взаимодействующих с оборудованием Cisco
+Это сборник ресурсов и документации
+
+
