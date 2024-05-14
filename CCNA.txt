@@ -219,6 +219,7 @@ no shutdown
 
                 DTP (dynamic tunking protocol)
 
+Есть только на Цисках
 Позволяет автоматически синхронизироыать смотрящие друг на друга порты свича CISCO, или access или trunk
 show interfaces g0/0 switchport - показывет в каком режиме настроен порт
 switchport nonegotiate - порт перестает отправляь DTP кадры
@@ -228,7 +229,11 @@ switchport trunk encapsulation negotiate
 поэтому прежде чем включить режим транк на порту, надо принудительно указать режим работы dot1q, иначе включится режим ISL, так как он в цисках имеет приоритетный выбор
 
 DTP в целях безопасности надо откоючать и устанавливать все руками
-switchport mode dynamic AUTO/DESIRABLE - это как раз и есть DTP. Desirable устанавливает транк или access с любым, прибитsv гвоздями, auto - только если второй приьит гвоздями, два auto смотрящих друг на друга - access
+switchport mode dynamic AUTO/DESIRABLE - это как раз и есть DTP. 
+- desirable устанавливает транк с любым auto или desirable,а так же с прибитым гвоздями транком, 
+- desirable устанавливает access только с прибитым гвоздями access портом
+- auto - только если второй прибит гвоздями (транк с транком, аксесс с аксессом)
+- два auto смотрящих друг на друга - образуют access
 
 На старых свичах по умолчанию порты в режиме (administrative mode):
 switchport mode dynamic desirable
@@ -1865,7 +1870,13 @@ ntp master
 9) Настройка WLC через GUI
 - создаем виртуальные интерфейсы с названием SSID и присваиваем им порт, влан, ip, маску, гейтвей, DHCP
 - создаем нужное кол-во WLAN (type, profile name, ID, SSID), настраиваем вкладку General (галка Enable и выбираем соответствующий вирутальный интерфейс) и настраиваем Security
+- просто дополнение - QoS режим Platinum for voice
 
+Имеет разные порты:
+- service port - для отдельный порт для out-of-band менеджмента
+- distribution system port - обычный сетевой порт которым WLC соединяется со свичем образуя LAG
+- console port (RJ45 or USB)
+- redundancy port - для соеднения с другим WLC для HA
 
                 Network automation
 
