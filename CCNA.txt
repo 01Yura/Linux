@@ -555,18 +555,26 @@ distance НОМЕР - сменить AD дистанцию (по умолч 110)
 
         Cost 
 
-Reference bandwidth/int bandwidth = 100/ напрмер 10Mb/s = 10
-                                  = 100/ 100Mb/s = 1
-Поэтому fastethernet, gigabit и так далее эквивалентны и = 1
+Cost = Reference bandwidth/interface bandwidth 
+default reference bandwidth = 100Mbps
+= 100/  10Mb/s = 10
+= 100/ 100Mb/s = 1
+Поэтому fastethernet, gigabit и так далее эквивалентны и = 1, так как ниже не может быть, потому что все что ниже 1, конвертируется в 1.
+show ip ospf int f0/0
 
-        auto-cost reference-bandwidth мегабиты_в_секунду - чтобы сменить reference bandwidth
+Чтобы сменить reference bandwidth нужно воспользоваться командой auto-cost reference-bandwidth
+        
+auto-cost reference-bandwidth мегабиты_в_секунду - чтобы сменить reference bandwidth
+auto-cost reference-bandwidth 100000
 Значение нужно брать больше чем самый быстрый линк в твоей сети, на будущее (н-р 100000, таким образом у 1GBb линка стоимость будет 100000/1000=100, у FastEthernet = 1000)
+На всех роутерах должно быть одинаково
 loopback интерфейс имеет cost = 1
 
 Настройка cost на интерфейсе:
 
 int f0/0
 ip ospf cost НОМЕР
+
 или можно изменить bandwidth, но это не рекомендунтся
 bandwidth ЦИФРА (в кб/сек)
 
@@ -606,10 +614,11 @@ no passive interface g0/0
 В каждой подсети из областидолжны быть выбраны DR and BDR routers, остальные становятся DROthers (они устанавливают смежность FULL только c DR and BDR, с другими роутерами у них состояние 2-way и просто соседство)
 DR/BDR elections
 - highest OSPF interface priority (по дефолту везде 1)
+int g0/0
 ip ospf priority ЦИФРА
 clear ip ospf process - на роутере который является DR, и тогда прошлый BDR станет DRом, а мы станем BDRом
 int g0/0
-ip ospf priority НОМЕР
+ip ospf priority НОМЕР (0-255)
 - Router ID
 В такой сети роутеры обмениваются LSA сообщениями только с DR и BDR, но не с другими DROthers используя мультикаст адрес 224.0.0.6
 
@@ -629,7 +638,7 @@ ip ospf network ?
 1) Area должна быть одинаковая
 2) Интерфейсы должны быть в одной подсети
 3) Router-id должны быть уникальны
-router-id ЦИФРА
+router-id ЦИФРА (0-255)
 4) Должны совпадать там=ймеры Hello (10) and Dead (40)
 настраиваются непосредственно на интерфейсе
 5) Сам OSPF не должен быть shutdown
@@ -638,7 +647,7 @@ router-id ЦИФРА
 ip ospf authentification-key ПАРОЛЬ - установить пароль
 ip ospf authentification - включить аутентификацию
 7) IP MTU должны совпадать (1500 байт по дефолту) - соседями станут, но в FULL не перейдут
-так же на интерфейсе
+так же на интерфейсе (будет висеть в состоянии EXCHANGE)
 ip mtu ЦИФРА
 8) Должен совпадать OSPF network type
 
