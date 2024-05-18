@@ -1535,6 +1535,8 @@ Digital sertifications - если организации нкжен сертиф
 | Безопасность            | Меньше                         | Выше                        |
 
 Эти различия делают RADIUS и TACACS+ подходящими для разных случаев использования в сетевой безопасности и управлении доступом.
+       
+       
         Security programm elements
 - user awareness
 - user trainings
