@@ -335,12 +335,15 @@ PVST+ - 01:00:0c:cc:cc:cd
 
 Portfast - включается на порту соединенному c хостом
 Позволяет портам немедленно перейти в режим forwarding, минуя Listening and Learning
+int f0/1 - заходим в интерфейс
 spanning-tree portfast
+
+Если не заходить на интерфейс, то можно так
 spanning-tree portfast default - вклбючает портфаст на всех access портах
 
 BPDU Guard - включенный режим на порту похволяет автоматически отключить интерфейс, при получении BPDU кадра на этот порт
 spanning-tree bpduguard enable - надо выполнять в настройках интерфейса
-spanning-tree portfast bpduguard default - включает BPDU guard на всех интерфейсах, где включен portfast
+spanning-tree portfast bpduguard default - включает BPDU guard на всех интерфейсах, где включен portfast. Не надо заходить в интерфейс
 
 Root Guard - если интерефейс получил BPDU с superior (lower bridge ID), то он отклоняется и свич остается root bridgем
 Интерфейс отключается
@@ -351,6 +354,7 @@ spanning-tree mode mst/pvst/rapid-pvst
 
 spanning-tree vlan 1 root primary - установить свич рутом
 spanning-tree vlan 1 root secondary
+spanning-tree vlan 1 priority 0 - 4096 и далее (по умолчанию 32768)
 
 spanning-tree vlan1 cost/port-priority
 
@@ -372,11 +376,10 @@ spanning-tree vlan1 cost/port-priority
 Чтобы включить режим edge порт для порта соединенного с конечным хостом:
 spanning-tree portfast
 
-                        Etherchannel Load-Balancing
+                                Etherchannel Load-Balancing
                         Агрегация каналов (LAG - link aggregation group)
 
 Позволяет обьединить несколько физических интерфейсов в однин логичесикй, тес асмым повысим bandwidth
-
 
 
 show etherchannel load-balance - посмотреть настройку (какой именно метод балансировки используется)
@@ -429,7 +432,7 @@ RIP (использует hop count в качестве метрики) и EIGRP
 [110/2] - административная дистанция и метрика
 AD используется для того, чтобы определить какой маршрут более заслуживает доверия (trustworthly)
 Можно указать AD когда прописываешь статический маршрут, например
-        ip route 0.0.0.0 0.0.0.0 192.168.1.254 10 - это AD, по умолчания AD для статики равно 1
+        ip route 0.0.0.0 0.0.0.0 192.168.1.254 10    - 10 это AD, по умолчания AD для статики равно 1
 
 
 Route protocol/type     AD
@@ -498,7 +501,7 @@ int loopback номер - создает лупбэк интерфейс с но
 - высший ip на физ интерфейсе
 eigrp-router id цифра 
 
-        Unequal cost load-balancinf in EIGRP
+        Unequal cost load-balancing in EIGRP
 
 Сделать команду:
 show ip eigrp topology
@@ -542,13 +545,13 @@ ABRs (area border routers) - роутеры между разными areas
 BR (backbone router) - роутер соединенный с area 0, любой у которого хоть 1 интерфейс соединен с area 0
 Intra-area route - маршрут внутри area
 Interarea route - между areas
-ASBR (autonomous system boundary router) - OSPF роутер, соединенный с внешней сеткой (появляется после ввода раздачи команды по умолчанию)
+ASBR (autonomous system boundary router) - OSPF роутер, соединенный с внешней сеткой (появляется после ввода раздачи команды по умолчанию - default-information originate)
 
-router ospf номер (номер не обязательно должен совпадать на всех ройтерах, это врктренний номер), это не номер area
-network 10.0.12.0 0.0.0.3 area 0 (для сети с маской /30)
+router ospf номер (номер не обязательно должен совпадать на всех ройтерах, это врктренний номер), это не номер area - вначала всегда создаем OSPF процесс
+network 10.0.12.0 0.0.0.3 area 0 (для сети с маской /30) - говорим какие интерфейсы участвуют в OSPF
 network 172.16.1.0 0.0.0.15 area 0 (для сети с маской /28)
-network 0.0.0.0 255.255.255.255 area 0 - включить на всех интерфейсах
-passive-interface g 2/0
+network 0.0.0.0 255.255.255.255 area 0 - можно включить OSPF сразу на всех интерфейсах
+passive-interface g 2/0 - сделать интерфес пассивным, чтобы он не рассылал Hello пакеты (аксесс поры и лупбэк)
 default-information originate - чтобы advertise default gateway
 
 show ip protocols
@@ -557,7 +560,7 @@ clear ip ospf process - чтобы удалить старый Router ID без 
 maximum-path НОМЕР (по умолчанию 4)
 distance НОМЕР - сменить AD дистанцию (по умолч 110)
 
-        Cost 
+        Cost интерфеса
 
 Cost = Reference bandwidth/interface bandwidth 
 default reference bandwidth = 100Mbps
@@ -603,13 +606,16 @@ Hello сообщение содержит помимо прочего My RID: 1.
 Они продолжают отсылать Hello пакеты каждые 10 сек для поддержания смежности
 Как только роутер получает Hello сообщение он сбрасывает свой Dead timer (40s)
 
-Можно включить OSPF сразу на интерфейсе:
+Можно включить OSPF сразу на интерфейсе, чтобы не использовать команду network ip + mask:
 int g0/0
 ip ospf НОМЕР area НОМЕР
 
-Пассивными можно сдлать все интерфейсы и потом исключить некоторые
+Пассивными можно сделать все интерфейсы и потом исключить некоторые, это делается из глобально режима настройки OSPF
+router ospf 1
 passive-interface default
 no passive interface g0/0
+или сделать пассивным какой то конкретный
+passive-interface lo 0 - например лупбэк
 
 В OSPF (Open Shortest Path First) выбор DR (Designated Router) и BDR (Backup Designated Router) происходит на основе приоритета и Router ID (RID) следующим образом:
 
@@ -652,6 +658,7 @@ clock rate ЦИФРА - настройка скорости обящзатель
 show controllers s0/0 - посмотреть какая сторона DCE или DTE
 
 3) Ручная настройка типа сети на интерфейсе
+int g0/0
 ip ospf network ? 
 
 Чтобы OSPF нормально работал на интерфейсах есть несколько условий:
@@ -691,6 +698,7 @@ o	If there is no Loopback Interfaces configured, the highest IP address on its a
 2) VRRP (virtual router redundancy protocol)
 3) GLBP (gateway load balancing protocol)
 
+Можно настроить на роутерах или L3-свичах
 
  Два роутера делят один га двоих virtul IP, и он настраивается в качестве defaul gateway на хостах. Они согласуют этот адрес путем рассылки multicast "Hello" друг другу
  Когда комп хочет вы1ти в другую сеть, то он запрашивает мак у своего default gateway и ему отвечает ACTIVE ROUTER, отсылая свой virtual mac-address
@@ -701,15 +709,27 @@ HSRP
 - cisco proprietary protocol
 - multicast "Hello" 224.0.0.102 (version 2, v2 использует 224.0.0.2)
 - virtual mac-address (v1 - 0000.0c07.acXX, v2 - 0000.0с9f.fxxx, где XX - это номер HSRP группы)
-Настраивается непосредственно на интерфейсе или vlane, если используются вланы 
+Настраивается непосредственно на интерфейсе (для всех вланов) или vlane, если используются вланы 
+
+Настройка на интерфейсе:
+
 int g0/0
+ip address ..... - на интерфейсе обязательно должен быть ip адрес
 standby version 2 - переключить на 2 версию, необязательно
-standby 1 ip АДРЕС - указать группу (в идеале чтоб совпадала с VLAN) и IP
+standby 1 ip АДРЕС - указать группу (в идеале чтоб совпадала с VLAN) и виртуальный IP (VIP) из той же подсети что и на интерфейсе
 standby 1 priority 200 - указать приоритет больше стандартного (100)
 standby 1 preempt - после восстановления после поломки стать ACTIVE, даже если другой уже является ACTIVE 
 ACTIVE ROUTER определяется значением priority (default 100 )или ip адресом
 show standby - показать общий вывод  настройки HSRP
 
+Для настройки на влане:
+
+int vlan 10
+ip address 10.0.0.2 255.255.255.240
+standby version 2
+standby 10 ip 10.0.0.1 - группу (в данном случае - 10) лучше указывать по номеру влана для лучшей понятности в дальнейшем
+standby 10 priority 105 - укажем приоритет на 5 больше дефолтного (100), чтобы данный роутер (l3-свич) был ACTIVE для данного влана
+standby 10 preempt
 
 VRRP
 - open standart
