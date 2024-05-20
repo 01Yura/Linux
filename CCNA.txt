@@ -917,6 +917,7 @@ Implicit deny - это такая штука : если трафик не соо
 - Standart ACL (numbered and named) - основаны только на SOURCE IP
 номера 1-99 и 1300-1999
 access-list НОМЕР {deny|permit} IP wildcard mask
+Станлартные АЦЛ применяются ближе к адресу назначения на сколько возможно. То есть например на выходе интерфеса заикоторым нпзодится адрес нащначения.
 
 access-list 1 deny 1.1.1.1 0.0.0.0 - заблокировать толькл данный хост
 access-list 1 deny 1.1.1.1 - можно и так для конкретного адреса
@@ -951,6 +952,7 @@ ip access-list reseqence 1 10 10 - аксесс-лист 1 сделать пос
 
 - Extended ACL (numbered and named) - основаны на src/dst IP and ports
 100-199 и 2000-2699
+!ВАЖНО! Extended ACL должны применяться к интерефейсу который ближе всего к источнику, чтобы зря не гонять трафик
 
 ip access-list extended ИМЯ_или_НОМЕР
 номер_строки deny|permit protocol src dst
@@ -1152,7 +1154,7 @@ snmp-server enable traps snmp linkdown linkup - настраиваем traps (и
 snmp-server enable traps config - если конфиг изменится, то traps будет отправлен на сервер
 
 SNMPv1 и v2 не шифруются и пароль передается в открытьм виде, поэтому нужно использовать 
-v3
+SNMPv3 - он более секьюрный
 
 show snmp ?
 
@@ -1420,7 +1422,7 @@ Classification:
 - NBAR (network based application recognition) - это deep-packet inspection вплоть до layer 7
 
 PCP (Priority code point) - поле 802.1q тэга в ethrtnet заголовке позволяет определить приоритет ьрафика
-Поле PCP так же известное как Cos (Class of service) имеет размер 8 бит и соответственнро трафику может быть назначен один из 8 приоритетов (0 - дефолт и по возрастающей)
+Поле PCP так же известное как CoS (Class of service) имеет размер 8 бит и соответственнро трафику может быть назначен один из 8 приоритетов (0 - дефолт и по возрастающей)
 
 Поле заголовка ip пакета называемле ToS (type of service) разделено на 2 сегмента DSCP (6бит) и ECN (2бит)
 DSCP (differentiated services code point) - поле в заголовке ip пакета служит для определения приоритета трафика
@@ -1632,15 +1634,16 @@ show errdisable recovery - посмотреть все причины выклю
 errdisable recovery cause psecure-violation - включить автомвтическое включение интерыейса при возникновении errdisable в случае срабатывания port-security
 errdisable recovery interval 180 - вновь включаться интерфейс будет через 180сек
 
-- shutdown
+- shutdown - интерфейс переходит в состояние err-disabled, отсылаются syslog и snmp сообщения (или нет?), выключается и только админ может его включить
 switchport port-security
 
-- restrict - свич дропает трафик от неавторизированного хоста, но сам интерфейс не отключается
+- restrict - свич дропает трафик от неавторизированного хоста, но интерфейс работает, но отсылаются syslog и snmp сообщения и увеличивается violation counter
+
 switchport port-security
 switchport port-security mac-address МАК_АДРЕС
 switchport port-security violation restrict
 
-- protect - свич так же дропает трафик, но интерфейс работает , однако так же не отсылает syslog и snmp сообщения и не увеличивает violation counter
+- protect - свич так же дропает трафик, но интерфейс работает , однако так же не отсылаются syslog и snmp сообщения и не увеличивается violation counter
 switchport port-security
 switchport port-security mac-address МАК_АДРЕС
 switchport port-security violation protect
