@@ -1642,7 +1642,7 @@ show errdisable recovery - посмотреть все причины выклю
 errdisable recovery cause psecure-violation - включить автомвтическое включение интерыейса при возникновении errdisable в случае срабатывания port-security
 errdisable recovery interval 180 - вновь включаться интерфейс будет через 180сек
 
-- shutdown - интерфейс переходит в состояние err-disabled, отсылаются syslog и snmp сообщения (или нет?), выключается и только админ может его включить
+- shutdown - интерфейс переходит в состояние err-disabled, отсылаются syslog и snmp сообщения (или нет?), и не увеличивается violation counter, выключается и только админ может его включить
 switchport port-security
 
 - restrict - свич дропает трафик от неавторизированного хоста, но интерфейс работает, но отсылаются syslog и snmp сообщения и увеличивается violation counter
