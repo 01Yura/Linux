@@ -914,6 +914,8 @@ show run conf | include ipv6
 Implicit deny - это такая штука : если трафик не соответствует ни одному условию в ACL, то роутер его дропнет. Поэтому 
        
         2 вида ACL:
+Standart and Extended
+
 - Standart ACL (numbered and named) - основаны только на SOURCE IP
 номера 1-99 и 1300-1999
 access-list НОМЕР {deny|permit} IP wildcard mask
@@ -929,6 +931,10 @@ access-list 1 permit any - разрешить все остальное
 access-list 1 permit 0.0.0.0 255.255.255.255 - или так
 
 access-list 1 remark # ОПИСАНИЕ # - комментарий к аксесс листу, хэштег не обязателен (отображается только в конфиге, что неудобно)
+
+Можно водить команду не просто
+access-list .... , а использовать команду
+ip access-list ....., тогда ммы провалимся в контекст команды и все парвила будем вводить в констексте 
 
 show access-lists
 show ip access-lists
@@ -1111,6 +1117,7 @@ lease 0 5 30 - дня часы минуты
 show ip dhcp binding - показывает всех dhcp клиентов
 
         DHCP Relay
+Чтобы роутер, не являющийся DHCP серевром пересылал DHCP сообщения хостам в сети оличной от сети DHCP сервера, надо чделать его relay'ем.        
 int g0/1
 ip helper-address 192.168.10.10 - адрес DHCP сервера
 
