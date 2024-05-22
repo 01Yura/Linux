@@ -705,6 +705,21 @@ o	If there is no Loopback Interfaces configured, the highest IP address on its a
 Если STANDBY ROUTER не получает Hello сообщений, он становится Active и отсылает gratuitous ARP reply броадкастом на ff-ff-ff-ff-ff-ff, чтобы изменить Arp-table на свичах
 Если R1 заработает снова, то он станет STANDBY ROUTER, но можно настроить чтобы он обратно становился ACTIVE ROUTER
 
+HSRP States
+
+Initial - This is the state at the start. This state indicates that HSRP does not run. This state is entered through a configuration change or when an interface first becomes available.
+
+Learn - The router has not determined the virtual IP address and has not yet seen an authenticated hello message from the active router. In this state, the router still waits to hear from the active router.
+
+Listen - The router knows the virtual IP address, but the router is neither the active router nor the standby router. It listens for hello messages from those routers.
+
+Speak - The router sends periodic hello messages and actively participates in the election of the active and/or standby router. A router cannot enter speak state unless the router has the virtual IP address.
+
+Standby - The router is a candidate to become the next active router and sends periodic hello messages. With the exclusion of transient conditions, there is, at most, one router in the group in standby state.
+
+Active - The router currently forwards packets that are sent to the group virtual MAC address. The router sends periodic hello messages. With the exclusion of transient conditions, there must be, at most, one router in active state in the group.
+
+
 HSRP
 - cisco proprietary protocol
 - multicast "Hello" 224.0.0.102 (version 2, v2 использует 224.0.0.2)
@@ -989,8 +1004,8 @@ show cdp neighbours
 show cdp neighbours detail
 show cdp entry R2 - показать инфу по конкретному соседу
 
-[no] cdp run - вкл или отключить cdp
-(config-if)# [no] cdp enable - на интерфейсе
+[no] cdp run - вкл (иначе вообще не будкт рабоать) или отключить cdp
+(config-if)# [no] cdp enable - на интерфейсе (можно отключить CDP на интерфейсе, с которого не хотим отправлять и получать CDP сообщения, при включенном CDP глобально)
 cdp timer TIME_IN_SEC
 cdp holdtime TIME_IN_SEC
 [no] cdp advertise-v2 - вкл или откл 2ю вкрсию (она вкл по дефолту)
