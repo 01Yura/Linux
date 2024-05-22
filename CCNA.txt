@@ -279,7 +279,7 @@ vtp version 2 - сменить режим VTP (VTP 2 поддерживает to
 1) Как выбирается root коммутатор:
 По наименьшему bridge ID (свич становится root bridge) - все порты на этом свиче разблокируются (состояние forwarding ports) (их роль - designated ports, это одна из ролей портов в STP)
 Bridge ID состоит из 2х полей :
-- bridge priority (16бит) - по умолч 32768 (можно менять на число 4096)
+- bridge priority (16бит) - по умолч 32768 (можно менять на число 4096). Свич с самым маленьким Bridge Priority становится rootом
 - mac address - если у всех свичей одинаковый bridge priority, то root bridge свич выбирается по наименьшему мак адресу (сравнивать цифры надо слева направо)
 
 Порты к которым подсоединены конечные устройства тоже разблокируются и не участвуют в передачи кадров BPDU (Bridge PDU)
@@ -309,7 +309,7 @@ Blocking - не принимают и дропают сетевой трафик
 
 Listening - в этом состоянии находятся root and designated ports.
 15 cек, согласно forward delay
-Не принимают трафик, просто получают и пересылают BPDU
+Не принимают трафик, просто получают и пересылают BPDU и NOT learn mac-addresses
 
 Learning - состояние после Listening
 15 сек 
@@ -989,8 +989,8 @@ show cdp neighbours
 show cdp neighbours detail
 show cdp entry R2 - показать инфу по конкретному соседу
 
-cdp [no] run - вкл или отключить cdp
-(config-if)# cdp [no] enable - на интерфейсе
+[no] cdp run - вкл или отключить cdp
+(config-if)# [no] cdp enable - на интерфейсе
 cdp timer TIME_IN_SEC
 cdp holdtime TIME_IN_SEC
 [no] cdp advertise-v2 - вкл или откл 2ю вкрсию (она вкл по дефолту)
@@ -1953,6 +1953,7 @@ AP в данной системе должны быть соединены со 
 Это называется split-MAC architecture
 WLC может находится в том же влане, или в другой сети
 Через WLC (wireless LAN controller) конфигурируются все AP централизованно
+WLC handles RF management, Security/ QOS management, client authentication, client association/ roaming management
 WLC и AP аутентифицируют дркг дркга по скртификатам X.509, установленным на каждом девайсе
 Используется протокол CAPWAP:
  между WLC и AP формируется 2 тоннеля
