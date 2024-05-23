@@ -83,6 +83,11 @@ interface GigabitEthernet 0/0 - войти в режим конфигураци�
 ip address 192.168.0.1 225.255.255.0
 no shutdown
 
+После назанчения ip адреса интерфейсу и его включения командой no shutdown в таблице маршрутизации появляется 2 маршрута:
+- C - connected маршрут к сети за этим интерфейсом (с маской данной сети)
+- L - local маршрут к IP адресу этого интерфейса (с маской /32)
+Данные маршруты имеют AD = 0
+
 show interfaces status - данная команда работает только на свичах
 
 show interfaces - показать инфу и ошибки всех интерфейсов
@@ -438,7 +443,7 @@ AD используется для того, чтобы определить к�
 Route protocol/type     AD
 
 directly connected      0
-static                  1
+static                  1 (метрика всегда 0)
 eBGP                    20
 EIGRP                   90
 IGRP (старая версия)    100
@@ -448,6 +453,9 @@ RIP                     120
 EIGRP(external)         170
 iBGP                    200
 unusable route          255
+
+В отличие от AD, метрика используется для сравнения маршрутов полученных через один и тот же routing protocol
+А вот AD используется чтобы понять какой маршрут, полученный от разных routing protocols предпочтительный и будет использоваться
 
                         RIP
 
@@ -1176,7 +1184,10 @@ snmp-server host 192.168.1.1 version 2c ПАРОЛЬ1 - указваем сер�
 snmp-server enable traps snmp linkdown linkup - настраиваем traps (интерфейс упал или поднялся)
 snmp-server enable traps config - если конфиг изменится, то traps будет отправлен на сервер
 
-SNMPv1 и v2 не шифруются и пароль передается в открытьм виде, поэтому нужно использовать 
+SNMPv1 и v2 не шифруются и пароль передается в открытьм виде, поэтому нужно использовать  SNMPv4
+Get, GetNext &Set are request types or operations in SNMPv1
+SNMPv2 introduced two new commands: Getbulk & Inform
+
 SNMPv3 - он более секьюрный
 
 show snmp ?
@@ -1185,7 +1196,7 @@ show snmp ?
 
 Syslog это индустриальный стандарт протокола для сообщений логгирования
 seq:time stamp: %facility-severity-MNEMONIC:description - 
-порядковый номер события : время события : какой процесс на дивайсе сгенерировал сообщение - важность/критичность события - короткий код события, говорящий что произошло : детальное описание произошедшего события 
+порядковый номер события : время события : % какой процесс на дивайсе сгенерировал сообщение - важность/критичность события - короткий код события, говорящий что произошло : детальное описание произошедшего события 
 
         Syslog severity levels (8 шт)
 0 - Emergency
@@ -1444,7 +1455,7 @@ Classification:
 - ACL
 - NBAR (network based application recognition) - это deep-packet inspection вплоть до layer 7
 
-PCP (Priority code point) - поле 802.1q тэга в ethrtnet заголовке позволяет определить приоритет ьрафика
+PCP (Priority code point) - поле 802.1q тэга в ethrnet заголовке позволяет определить приоритет ьрафика
 Поле PCP так же известное как CoS (Class of service) имеет размер 8 бит и соответственнро трафику может быть назначен один из 8 приоритетов (0 - дефолт и по возрастающей)
 
 Поле заголовка ip пакета называемле ToS (type of service) разделено на 2 сегмента DSCP (6бит) и ECN (2бит)
@@ -1809,6 +1820,15 @@ Site-to-site (IPsec)
   When a site-to-site VPN is configured, IPsec tunnel mode with ESP (Encapsulating Security Payload) provides encapsulation and encryption of the entire original IP packet. In this mode, the entire IP packet, including the original IP header and payload, is encapsulated within a new IP packet with a new IP header added by the VPN gateway. The original packet is encrypted, ensuring confidentiality, and the new IP header allows the encrypted packet to be routed over the public internet securely to the other VPN gateway, where it is decrypted and forwarded to its final destination.
         Authentication Header (AH)
         Encapsulating Security Payload (ESP)
+
+
+IPsec (Internet Protocol Security) is a suite of protocols used for securing internet protocol (IP) communications. The two protocols within the IPsec suite are:
+
+    Authentication Header (AH): AH provides data authentication and integrity protection for IP packets, but does not provide encryption. AH calculates a hash value over the IP packet and some additional data, and places the result in a new header that is added to the packet.
+
+    Encapsulating Security Payload (ESP): ESP provides both encryption and data authentication for IP packets. ESP encrypts the original IP packet and places it inside a new packet, along with a new ESP header that provides data authentication and integrity protection.
+
+Both AH and ESP protocols can be used alone or in combination to provide secure communication between two network devices. AH and ESP are often used in conjunction with the Internet Key Exchange (IKE) protocol, which is used to negotiate and establish security associations (SAs) between devices.
 
         tunnel is entire
         transport is not
