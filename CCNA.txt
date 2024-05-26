@@ -331,6 +331,27 @@ switchport mode dynamic auto
 switchport nonegotiate - отключить DTP на конкретном порту
 
 
+| Режим порта 1 | Режим порта 2 | Режим работы (access/trunk) |
+|---------------|---------------|-----------------------------|
+| access        | access        | access                      |
+| access        | trunk         | incompatible                |
+| access        | desirable     | access                      |
+| access        | auto          | access                      |
+| trunk         | trunk         | trunk                       |
+| trunk         | desirable     | trunk                       |
+| trunk         | auto          | trunk                       |
+| desirable     | desirable     | trunk                       |
+| desirable     | auto          | trunk                       |
+| auto          | auto          | access                      |
+
+**Примечания:**
+- **access** — порт в этом режиме работает с одной VLAN и не передает теги VLAN.
+- **trunk** — порт в этом режиме передает трафик для нескольких VLAN и добавляет теги VLAN.
+- **desirable** — порт активно пытается установить соединение как trunk.
+- **auto** — порт пассивно ожидает попытки установить соединение как trunk от другого порта.
+
+Таким образом, если хотя бы один порт находится в режиме **desirable**, а другой в режиме **desirable** или **auto**, соединение будет установлено как trunk. Если оба порта находятся в режиме **auto**, соединение установится как access, так как ни один из портов не инициирует trunk-соединение.
+
 
                 VTP (VLAN trunking protocol)
 
@@ -1393,9 +1414,10 @@ service sequence-numbers - включить нумерацию логов
 
 show logging - посмортеть настройки логгирования
 
-                                SSH (secure shell)
+                                SSH , TELNET, CONSOLE PORT
 
         Настройка Console port
+
 По дефолту подключится к CLI через console port можно без пароля, однако пароль можно установить через контекст console line
 line console 0 - так как  есть только одна линия подключения через консольный порт (т е одновременно может быть подключен только одинт юзер), то номер всегда - 0
 password ccna 
@@ -1403,30 +1425,35 @@ login - включить подключение по паролю (без это
 end
 
 Можно настроить чтобы при подключении по консольномк порту запрашивался общий логин и пароль, созданный ранее
-username ИМЯ secret ПАРОЛЬ
+username ИМЯ secret ПАРОЛЬ - создаем юзера и пароль
 line console 0
-login local
+login local - теперь подключение будет по пользователю+паролю, даже если предварительно было подключение только по паролю
 exec-timeout 3 30 - макс время неактивности
 end
 
 После этих команд login mode смениться с login на login local и пароль введенный на предыдущем шаге (настройки только для конс порта) больше не активен
 
-Чтобы подключится удаленно (telnet or ssh) к свичу L2 нужно назначить ip адрес на вирт интерфейс SVI
+Чтобы подключится удаленно (telnet or ssh) к свичу L2 нужно назначить ip адрес на вирт интерфейс SVI и маршрут по умолчанию
 interface vlan1
 ip address 192.168.1.253 255.255.255.0
 no shutdown
 exit
 ip default-gateway 192.168.1.254
 
+
+
         Настройка telnet (23 port)
+
 enable secret ПАРОЛЬ - обязательно настроить пароль, иначе не войдешь в #
 username ИМЯ secret ПАРОЛЬ
-access-list 1 permit host 192.168.2.1
+access-list 1 permit host 192.168.2.1 - необязательно, но так можно ограничить с каких девайсов можно подключится к vty линиям
 line vty 0 15 - подключения по ssh and telnet настраиваются на VTY lines (virtual teletype), всего их 16, что значит одновременно могут быт подключены 16 юзеров
 login local
 exec-timeout 5 0
 transport input telnet/ssh/all/none - какой тип соединения разрешен на линиях VTY
 access-class 1 in - применяем ACL на эти линии VTY (ВНИМАНИЕ! НЕ access-group !)
+
+
 
         Настройка SSH (22 port)
 
@@ -1434,21 +1461,24 @@ show version
 И если покажет K9, значит девайс поддерживает SSH (н-р: vios_l2-ADVENTERPRISEK9-M)
 show ip ssh - поддерживается ли SSH,  версия 1.99 означает поддержку SSHv1 и SSHv2, но до создания RSA ключа SSH - disabled
 Для начала нужно сгенерировать RSA ключ, но до этого установить FQDM на девайс, но до этого сменить дефолное hostname
-hostname ИМЯ
-ip domain name company.local
-crypto key generate rsa
+1) hostname ИМЯ - нужно создать недефолтное имя, чтобы создать FQDN на следующем шаге
+2) ip domain name company.local - нужно создать домен, так как FQDN (hostname + dns domain name) используется в насзании RSA ключа
+3) crypto key generate rsa
+после чего попросит ввести длину ключа из предложенного диапазона
 2048 - можно указать размер ключа, по дефолту 512
-show ip ssh - теперь ssh - enabled
+Можно использовать команду:
+crypto key generate rsa general-keys modulus 2048
+show ip ssh - теперь ssh - enabled (версия SSH, указанная тут -1.99, это значит что к девайсу можно подключится испоользуя и 1 и 2 версии ssh, чтоюы разрешить испоользование только 2й версии нужно выполить команду ip ssh version 2, теперь версия SSH будет - 2.0)
 
 enable secret ПАРОЛЬ - обязательно настроить пароль, иначе не войдешь в #
 username ИМЯ secret ПАРОЛЬ
-access-list 1 permit host 192.168.2.1
+access-list 1 permit host 192.168.2.1 - не обязательно
 ip ssh version 2 - ограничить возможность только использование 2ой Версии
 line vty 0 15
 login local
 exec-timeout 5 0
-transport input ssh
-access-class 1 in (ВНИМАНИЕ! НЕ access-group !)
+transport input ssh - ограничить подключения на vty линиях только по ssh (best practice)
+access-class 1 in (ВНИМАНИЕ! НЕ access-group !) - опционально, но рекомандовано
 
                                 FTP and TFTP
 
