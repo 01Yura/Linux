@@ -1916,6 +1916,8 @@ Digital sertifications - если организации нкжен сертиф
 Дефолтное поведение интерфейса это - shutdown - интерефейс автоматически переводится в состояние err-disabled и отключается до того, пока админ не включит его вручную
 Можно устанавливать лимит мак адресов, подключенных к порту
 
+https://www.cisco.com/c/en/us/support/docs/lan-switching/spanning-tree-protocol/69980-errdisable-recovery.html#anc8 
+
 int g0/1
 switchport mode access/trunk - порт секьюрити может быть применен только к аксесс портам или транка, не к тем кто dynamic auto или dynamic desirable
 switchport port-security
