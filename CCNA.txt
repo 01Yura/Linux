@@ -1038,7 +1038,7 @@ ipv6 address 2001:db8:1:1::99/128 anycast
 do show ipv6 int br
 
 :: - когда интерфейс не знает свой адрес
-::/0 - edfault gateway
+::/0 - default gateway
 
 ::1 - loopback 
 
