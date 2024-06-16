@@ -58,7 +58,7 @@ git remote add origin ссылка_с_гитхаба - связать репоз
 git remote -v - посмотреть какие есть репы
 или
 git remote set-url origin ссылка_с_гитхаба - сменить репозиторий
-git push origin master (или main) - отправить изменения на сервер origin в ветку master с ветки на которой я сейчас нахожусь
+git push origin master (или main) - отправить изменения на сервер origin в ветку master(main) с ветки на которой я сейчас нахожусь
 
 
 git push -u origin master
@@ -92,7 +92,7 @@ git commit --amend - можно поменять описание коммита
 
 КАК РАБОТАТЬ В ОРГАНИЗАЦИИ:
 1 тебе дают доступ к репозиторию компании (говоришь им свой логин на гитхабе например)
-2 делаешь git clone репы себе на компании
+2 делаешь git clone репы себе на комп
 3 создаешь свою ветку!!!! (нельзя работать в ветке master)
 4 делаешь изменения, коммитишь
 5 делаешь пуш на гитхаб, но так как там твоей ветки не существует, то используешь следующую команду для удаленного создания ветки и пуша:
@@ -118,3 +118,17 @@ git push origin --tags - запушить все таги в удаленный 
 
 git reset --hard HEAD~1 - удаляем у себя
 git push origin main --force - перезаписываем в удаленный репозиторий
+
+
+Если переименовал ветку master на main в удаленном репозитории
+
+The default branch has been renamed!
+
+master is now named main
+
+If you have a local clone, you can update it by running the following commands.
+
+git branch -m master main
+git fetch origin
+git branch -u origin/main main
+git remote set-head origin -a
