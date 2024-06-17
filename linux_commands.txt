@@ -1,6 +1,5 @@
-https://examposter.com/lpi/linux-i-2-21/ - ответы на тесты, что то неправильно
+curl icanhazip.com - посмотреть свой белый ip
 
-повторить sed, tr,                  
                  
                  Лицензирование
 https://upload.wikimedia.org/wikipedia/commons/1/1b/Linux_Distribution_Timeline.svg
